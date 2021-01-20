@@ -58,7 +58,7 @@ struct ContentView: View {
                     
                 }
             }
-        }//.onAppear{GIDSignIn.sharedInstance().restorePreviousSignIn()} // uncomment to run on real device.
+        }.onAppear{GIDSignIn.sharedInstance().restorePreviousSignIn()} // uncomment to run on real device.
         
         
         
