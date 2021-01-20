@@ -16,38 +16,55 @@ struct ContentView: View {
     @State var loginpasswordVisible: Bool = false
     @State var signuppasswordVisible: Bool = false
     @State var signuprepasswordVisible: Bool = false
+    @State var logedin: Bool = UserDefaults.standard.bool(forKey: "logedin")
     @State var loginemail: String = ""
     @State var loginpassword: String = ""
     @State var signupemail: String = ""
     @State var signuppassword: String = ""
     @State var signuprepassword: String = ""
+    @State var alertMessage = "Something is wrong."
+    @State var showingAlert = false
+    @State var forgetemail = ""
+
+    func test(){
+        print("email signed in = \(logedin)")
+    }
     var body: some View {
+        
         Group{
+            
             ZStack{
                 LinearGradient(gradient: .init(colors: [Color("c1"),Color("c2"),Color("c3")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all)
-                if googleDelegate.signedIn{
-                    signOutButton()
+                
+                if logedin || googleDelegate.signedIn {
+                    signOutButton(logedin: $logedin,index:$index,loginemail:$loginemail, loginpassword: $loginpassword, passwordVisible: $loginpasswordVisible,signupemail:$signupemail,signuppassword:$signuppassword,signuprepassword:$signuprepassword,signuppasswordVisible: $signuppasswordVisible,signuprepasswordVisible: $signuprepasswordVisible,forgetemail: $forgetemail)
                 }else{
-                    
+
                     VStack{
                         Spacer()
                         Logo()
                         HStack{
                             existingUserButton(index: $index)
                             newUserButton(index: $index)
+                            forgetPasswordButton(index: $index)
                         }.background(Color.black.opacity(0.1))
                         .clipShape(Capsule())
                         .padding(.top,25)
                         
                         if self.index == 0{
-                            Login(loginemail:$loginemail, loginpassword: $loginpassword, passwordVisible: $loginpasswordVisible)
-                        }else{
-                            SignUp(signupemail:$signupemail,signuppassword:$signuppassword,signuprepassword:$signuprepassword,signuppasswordVisible: $signuppasswordVisible,signuprepasswordVisible: $signuprepasswordVisible )
+                            Login(loginemail:$loginemail, loginpassword: $loginpassword, passwordVisible: $loginpasswordVisible,showingAlert:$showingAlert,logedin:$logedin,alertMessage:$alertMessage,index:$index).alert(isPresented: $showingAlert) {
+                                Alert(title: Text(alertMessage), message: Text(""), dismissButton: .default(Text("OK")))
+                            }
+                        }else if self.index == 1{
+                            SignUp(signupemail:$signupemail,signuppassword:$signuppassword,signuprepassword:$signuprepassword,signuppasswordVisible: $signuppasswordVisible,signuprepasswordVisible: $signuprepasswordVisible,logedin:$logedin,alertMessage:$alertMessage,showingAlert:$showingAlert,index:$index).alert(isPresented: $showingAlert) {
+                                Alert(title: Text(alertMessage), message: Text(""), dismissButton: .default(Text("OK")))
+                            }
+                        }else if self.index == 2{
+                            Forget(forgetemail:$forgetemail,showingAlert:$showingAlert,alertMessage:$alertMessage,index:$index).alert(isPresented: $showingAlert) {
+                                Alert(title: Text(alertMessage), message: Text(""), dismissButton: .default(Text("OK")))
+                            }
                         }
-                        
-                        if self.index == 0{
-                            forgetPasswordButton()
-                        }
+                
                         
                         orDivider()
                         
@@ -59,6 +76,7 @@ struct ContentView: View {
                 }
             }
         }.onAppear{GIDSignIn.sharedInstance().restorePreviousSignIn()} // uncomment to run on real device.
+        
         
         
         
@@ -75,12 +93,40 @@ struct GoogleSignInButton: UIViewRepresentable {
     func updateUIView(_ uiView: UIViewType, context: Context) {}
 }
 
+
+func hideKeyboard(){
+    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+}
+
 struct Login : View {
     @Binding var loginemail: String
     @Binding var loginpassword: String
     @Binding var passwordVisible: Bool
-
+    @Binding var showingAlert: Bool
+    @Binding var logedin: Bool
+    @Binding var alertMessage: String
+    @Binding var index: Int
     @EnvironmentObject var googleDelegate: GoogleDelegate
+    
+    func login(){
+        hideKeyboard()
+        
+        Auth.auth().signIn(withEmail: loginemail, password: loginpassword) { (result, error) in
+            if error != nil {
+                logedin = false
+                UserDefaults.standard.set(logedin,forKey: "logedin")
+                alertMessage = error?.localizedDescription ?? ""
+                showingAlert = true
+            }else{
+                
+                print("Signed in with email")
+                logedin = true
+                UserDefaults.standard.set(logedin,forKey: "logedin")
+                
+            
+            }
+        }
+    }
     var body : some View{
         VStack{
             VStack{
@@ -98,8 +144,68 @@ struct Login : View {
             .padding(.top,25)
             .padding(.bottom,40)
             
-            Button(action:{}){
+            Button(action:{
+                login()
+            }){
                 Text("LOGIN")
+                    .foregroundColor(.white)
+                    .padding(.vertical)
+                    .frame(width: UIScreen.main.bounds.width - 100)
+            }.background(
+                LinearGradient(gradient: .init(colors: [Color("c3"),Color("c2"),Color("c1")]), startPoint: .leading, endPoint: .trailing))
+                .cornerRadius(8)
+                .offset(y:-70)
+                .shadow(radius: 15)
+                
+        }
+        
+    }
+}
+
+struct Forget : View {
+    
+    @EnvironmentObject var googleDelegate: GoogleDelegate
+    @Binding var forgetemail: String
+    @Binding var showingAlert: Bool
+    @Binding var alertMessage: String
+    @Binding var index: Int
+    func forget(){
+        if forgetemail == ""{
+            alertMessage = "Please enter email address!"
+            showingAlert = true
+            return
+        }
+        hideKeyboard()
+        Auth.auth().sendPasswordReset(withEmail: forgetemail) { error in
+            if error != nil{
+                alertMessage = error?.localizedDescription ?? ""
+                showingAlert = true
+            }else{
+                alertMessage = "Email Sent!"
+                showingAlert = true
+            }
+        }
+        
+    }
+    var body : some View{
+        VStack{
+            VStack{
+                HStack(spacing: 15){
+                    Image(systemName: "envelope")
+                        .foregroundColor(.black)
+                    TextField("Enter Email Address", text: self.$forgetemail)
+                }.padding(.vertical,20)
+            }.padding(.vertical)
+            .padding(.horizontal,20)
+            .background(Color.white)
+            .cornerRadius(10)
+            .padding(.top,25)
+            .padding(.bottom,40)
+            
+            Button(action:{
+                forget()
+            }){
+                Text("Send Email")
                     .foregroundColor(.white)
                     .padding(.vertical)
                     .frame(width: UIScreen.main.bounds.width - 100)
@@ -120,6 +226,56 @@ struct SignUp : View {
     @Binding var signuprepassword: String
     @Binding var signuppasswordVisible: Bool
     @Binding var signuprepasswordVisible: Bool
+    @Binding var logedin: Bool
+    @Binding var alertMessage: String
+    @Binding var showingAlert: Bool
+    @Binding var index: Int
+    func validateForm() -> Bool{
+        var valid = true
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
+        let emailTest:NSPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
+        if signupemail.isEmpty || signuppassword.isEmpty || signuprepassword.isEmpty {
+            alertMessage = "Please fill in all the forms."
+            showingAlert = true
+            valid = false
+        }else if !(emailTest.evaluate(with: signupemail)){
+            alertMessage = "Invalid Email address."
+            showingAlert = true
+            valid = false
+        }else if signuppassword.count <= 5 {
+            alertMessage = "Password too short."
+            showingAlert = true
+            valid = false
+        }else if !(signuppassword == signuprepassword){
+            alertMessage = "Those passwords didn't match."
+            showingAlert = true
+            valid = false
+        }
+        
+        return valid
+    }
+    func signup(){
+        hideKeyboard()
+        if !validateForm(){
+            return
+        }
+        
+        Auth.auth().createUser(withEmail: signupemail, password: signuppassword){ (result, error) in
+            if error != nil {
+                alertMessage = error?.localizedDescription ?? ""
+                showingAlert = true
+            }else{
+                let currentUser = Auth.auth().currentUser!
+                var databasereference: DatabaseReference!
+                databasereference = Database.database().reference()
+                databasereference.child("users/\(currentUser.uid)/uid").setValue(currentUser.uid)
+                databasereference.child("users/\(currentUser.uid)/email").setValue(currentUser.email!)
+                databasereference.child("users/\(currentUser.uid)/userName").setValue(currentUser.email!)
+                logedin = true
+                UserDefaults.standard.set(logedin,forKey: "logedin")
+            }
+        }
+    }
     var body : some View{
         VStack{
             VStack{
@@ -139,7 +295,9 @@ struct SignUp : View {
             .padding(.top,25)
             .padding(.bottom,40)
             
-            Button(action:{}){
+            Button(action:{
+                signup()
+            }){
                 Text("SIGNUP")
                     .foregroundColor(.white)
                     .padding(.vertical)
@@ -155,17 +313,6 @@ struct SignUp : View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-   @EnvironmentObject var googleDelegate: GoogleDelegate
-   static var previews: some View {
-      ContentView().environmentObject(GoogleDelegate())
-  }
-}
-
-
-
-
-
 struct Logo: View {
     var body: some View {
         Image("OurSpaceText")
@@ -174,16 +321,6 @@ struct Logo: View {
 }
 
 
-
-
-struct forgetPasswordButton: View {
-    var body: some View {
-        Button(action: {}){
-            Text("Forget Password?")
-                .foregroundColor(.white)
-        }.padding(.top,20)
-    }
-}
 
 struct existingUserButton: View {
 
@@ -200,11 +337,13 @@ struct existingUserButton: View {
                 .foregroundColor(self.index == 0 ? .black : .white)
                 .fontWeight(.bold)
                 .padding(.vertical,10)
-                .frame(width: (UIScreen.main.bounds.width - 50) / 2)
+                .frame(width: (UIScreen.main.bounds.width - 50) / 3)
         }.background(self.index == 0 ? Color.white : Color.clear)
         .clipShape(Capsule())
     }
 }
+
+
 
 struct newUserButton: View {
     @Binding var index : Int
@@ -218,8 +357,29 @@ struct newUserButton: View {
                 .foregroundColor(self.index == 1 ? .black : .white)
                 .fontWeight(.bold)
                 .padding(.vertical,10)
-                .frame(width: (UIScreen.main.bounds.width - 50) / 2)
+                .frame(width: (UIScreen.main.bounds.width - 50) / 3)
         }.background(self.index == 1 ? Color.white : Color.clear)
+        .clipShape(Capsule())
+    }
+}
+
+struct forgetPasswordButton: View {
+
+    @Binding var index : Int
+    var body: some View {
+        
+        Button(action: {
+            withAnimation(.spring(response:0.8, dampingFraction: 0.5,blendDuration: 0.5)){
+                self.index = 2
+            }
+            
+        }){
+            Text("Forget")
+                .foregroundColor(self.index == 2 ? .black : .white)
+                .fontWeight(.bold)
+                .padding(.vertical,10)
+                .frame(width: (UIScreen.main.bounds.width - 50) / 3)
+        }.background(self.index == 2 ? Color.white : Color.clear)
         .clipShape(Capsule())
     }
 }
@@ -231,6 +391,7 @@ struct orDivider: View {
                 .frame(width: 35, height: 1)
             
             Text("Or")
+                .fontWeight(.bold)
                 .foregroundColor(.white)
             Color.white.opacity(0.7)
                 .frame(width: 35, height: 1)
@@ -240,10 +401,40 @@ struct orDivider: View {
 
 struct signOutButton: View {
     @EnvironmentObject var googleDelegate: GoogleDelegate
+    @Binding var logedin: Bool
+    @Binding var index: Int
+    @Binding var loginemail: String
+    @Binding var loginpassword: String
+    @Binding var passwordVisible: Bool
+    @Binding var signupemail: String
+    @Binding var signuppassword: String
+    @Binding var signuprepassword: String
+    @Binding var signuppasswordVisible: Bool
+    @Binding var signuprepasswordVisible: Bool
+    @Binding var forgetemail: String
     var body: some View {
         Button(action: {
+            do {
+                try Auth.auth().signOut()
+            } catch let signOutError as NSError {
+              print ("Error signing out: %@", signOutError)
+                logedin = false
+                UserDefaults.standard.set(logedin,forKey: "logedin")
+            }
             GIDSignIn.sharedInstance().signOut()
             googleDelegate.signedIn = false
+            logedin = false
+            UserDefaults.standard.set(logedin,forKey: "logedin")
+            index = 0
+            loginemail = ""
+            loginpassword = ""
+            passwordVisible = false
+            signupemail = ""
+            signuppassword = ""
+            signuprepassword = ""
+            signuppasswordVisible = false
+            signuprepasswordVisible = false
+            forgetemail = ""
         }){
             Text("Sign Out")
                 .foregroundColor(.white)
@@ -286,3 +477,13 @@ struct passwordField: View {
         }.padding(.vertical,20)
     }
 }
+
+struct ContentView_Previews: PreviewProvider {
+   @EnvironmentObject var googleDelegate: GoogleDelegate
+   static var previews: some View {
+      ContentView().environmentObject(GoogleDelegate())
+  }
+}
+
+
+

@@ -14,16 +14,32 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
         if let error = error {
             if (error as NSError).code == GIDSignInErrorCode.hasNoAuthInKeychain.rawValue {
-                print("The user has not signed in before or they have since signed out.")
+                print("googleSignedI = false")
             } else {
                 print("\(error.localizedDescription)")
             }
             return
         }
+        guard let authentication = user.authentication else { return }
+          let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
+                                                            accessToken: authentication.accessToken)
+        Auth.auth().signIn(with: credential){ (result, error) in
+            if error != nil {
+                print(error!.localizedDescription)
+            }else{
+                print("Successful google sign-in!")
+                let currentUser = Auth.auth().currentUser!
+                var databasereference: DatabaseReference!
+                databasereference = Database.database().reference()
+                databasereference.child("users/\(currentUser.uid)/uid").setValue(currentUser.uid)
+                databasereference.child("users/\(currentUser.uid)/email").setValue(currentUser.email!)
+                databasereference.child("users/\(currentUser.uid)/userName").setValue(currentUser.email!)
+            }
+        }
         // If the previous `error` is null, then the sign-in was succesful
-        print("Successful sign-in!")
         signedIn = true
     }
+
     
     
 }
