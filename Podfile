@@ -10,6 +10,7 @@ pod 'Firebase/Database'
 pod 'FirebaseUI/Auth'
 pod 'GoogleSignIn'
 pod 'FirebaseUI/Google'
+pod 'SDWebImageSwiftUI'
 
 
   # Pods for OurSpace

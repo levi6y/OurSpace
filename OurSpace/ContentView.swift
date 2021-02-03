@@ -26,9 +26,7 @@ struct ContentView: View {
     @State var showingAlert = false
     @State var forgetemail = ""
 
-    func test(){
-        print("email signed in = \(logedin)")
-    }
+
     var body: some View {
         
         Group{
@@ -37,7 +35,8 @@ struct ContentView: View {
                 LinearGradient(gradient: .init(colors: [Color("c1"),Color("c2"),Color("c3")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all)
                 
                 if logedin || googleDelegate.signedIn {
-                    signOutButton(logedin: $logedin,index:$index,loginemail:$loginemail, loginpassword: $loginpassword, passwordVisible: $loginpasswordVisible,signupemail:$signupemail,signuppassword:$signuppassword,signuprepassword:$signuprepassword,signuppasswordVisible: $signuppasswordVisible,signuprepasswordVisible: $signuprepasswordVisible,forgetemail: $forgetemail)
+                    Home(logedin: $logedin,index:$index,loginemail:$loginemail, loginpassword: $loginpassword, passwordVisible: $loginpasswordVisible,signupemail:$signupemail,signuppassword:$signuppassword,signuprepassword:$signuprepassword,signuppasswordVisible: $signuppasswordVisible,signuprepasswordVisible: $signuprepasswordVisible,forgetemail: $forgetemail)
+                    
                 }else{
 
                     VStack{
@@ -271,6 +270,7 @@ struct SignUp : View {
                 databasereference.child("users/\(currentUser.uid)/uid").setValue(currentUser.uid)
                 databasereference.child("users/\(currentUser.uid)/email").setValue(currentUser.email!)
                 databasereference.child("users/\(currentUser.uid)/userName").setValue(currentUser.email!)
+                databasereference.child("users/\(currentUser.uid)/pic").setValue("https://firebasestorage.googleapis.com/v0/b/ourspace-ios-69c00.appspot.com/o/users%2Fuserphoto.png?alt=media&token=7eb7a79c-e506-4190-ad46-a2ab3c0a565")
                 logedin = true
                 UserDefaults.standard.set(logedin,forKey: "logedin")
             }

@@ -6,16 +6,10 @@
 //
 
 import Foundation
-class User{
-    
+
+struct User {
     var email: String
     var userName: String
     var uid: String
-    
-    init(email: String, userName: String, uid: String){
-        self.email = email
-        self.userName = userName
-        self.uid = uid
-    }
-    
+    var pic: String
 }
