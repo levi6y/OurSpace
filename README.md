@@ -2,4 +2,7 @@
  COMP4905
 
 21 Jan
-1. add login/signup/forget password functions
+1. implement login/signup/forget password functions.
+
+4 Feb
+1. implement userphoto and username functions.
