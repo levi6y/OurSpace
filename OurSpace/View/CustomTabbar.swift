@@ -8,6 +8,7 @@ import SwiftUI
 
 struct CustomTabbar: View {
     @Binding var selectedTab : String
+    
     var body: some View {
         
         HStack(spacing: 65){
@@ -27,10 +28,22 @@ struct TabButton : View {
     
     var title : String
     @Binding var selectedTab : String
-    
+    @EnvironmentObject var googleDelegate: GoogleDelegate
     var body: some View{
         
-        Button(action: {selectedTab = title}) {
+        Button(action: {
+            selectedTab = title
+            if title == "Create"{
+                googleDelegate.trackUserListOnce()
+                googleDelegate.trackSpaceListOnce()
+            }else if title == "Dashboard"{
+                googleDelegate.trackSpaceListOnce()
+            }
+            
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            
+
+        }) {
             
             VStack(spacing: 5){
                 

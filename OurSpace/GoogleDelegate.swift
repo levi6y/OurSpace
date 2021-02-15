@@ -70,6 +70,118 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         }
         
     }
+    func trackUserAndSpaceList(){
+        var ref: DatabaseReference!
+        ref = Database.database().reference()
+        ref.child("spaces").observe(DataEventType.value, with: { (snapshot) in
+            let value = snapshot.value as? NSDictionary
+            if (value != nil){
+                self.spaceL.removeAll()
+                
+                for space in value! {
+                    let temp = space.value as? NSDictionary
+                    let t1 = temp?["u1"] as? String ?? ""
+                    let t2 = temp?["u2"] as? String ?? ""
+                    let t3 = temp?["name"] as? String ?? ""
+                    let t4 = temp?["uid"] as? String ?? ""
+                    let t5 = temp?["numOfPhotos"] as? Int ?? -1
+                    let t6 = temp?["numOfLogs"] as? Int ?? -1
+                    let t7 = temp?["numOfAnniversaries"] as? Int ?? -1
+                    let s = Space(u1: t1, u2: t2, name: t3, uid: t4, numOfPhotos: t5, numOfLogs: t6, numOfAnniversaries: t7)
+                    self.spaceL.append(s)
+                }
+                print("space list updated")
+                //print(self.spaceL)
+            }else{
+                self.spaceL.removeAll()
+                print("space list updated")
+            }
+        })
+        ref.child("users").observe(DataEventType.value, with: { (snapshot) in
+            let value = snapshot.value as? NSDictionary
+            if (value != nil){
+                self.userL.removeAll()
+                
+                for user in value! {
+                    let temp = user.value as? NSDictionary
+                    let username = temp?["userName"] as? String ?? "No Username"
+                    let uid = temp?["uid"] as? String ?? ""
+                    let email = temp?["email"] as? String ?? ""
+                    let pic = temp?["pic"] as? String ?? "0"
+                    let u = User(email: email, userName: username, uid: uid, pic: pic)
+                    self.userL.append(u)
+                    
+                }
+                print("user list updated")
+
+               // print(self.userL)
+
+            }else{
+                self.userL.removeAll()
+                print("user list updated")
+            }
+        })
+    }
+    
+    func trackSpaceListOnce(){
+        var ref: DatabaseReference!
+        ref = Database.database().reference()
+        ref.child("spaces").observeSingleEvent(of: .value, with: { (snapshot) in
+            let value = snapshot.value as? NSDictionary
+            if (value != nil){
+                self.spaceL.removeAll()
+                
+                for space in value! {
+                    let temp = space.value as? NSDictionary
+                    let t1 = temp?["u1"] as? String ?? ""
+                    let t2 = temp?["u2"] as? String ?? ""
+                    let t3 = temp?["name"] as? String ?? ""
+                    let t4 = temp?["uid"] as? String ?? ""
+                    let t5 = temp?["numOfPhotos"] as? Int ?? -1
+                    let t6 = temp?["numOfLogs"] as? Int ?? -1
+                    let t7 = temp?["numOfAnniversaries"] as? Int ?? -1
+                    let s = Space(u1: t1, u2: t2, name: t3, uid: t4, numOfPhotos: t5, numOfLogs: t6, numOfAnniversaries: t7)
+                    self.spaceL.append(s)
+                }
+                print("space list updated")
+                //print(self.spaceL)
+            }else{
+                self.spaceL.removeAll()
+                print("space list updated")
+            }
+        })
+        
+        
+    }
+    func trackUserListOnce(){
+        var ref: DatabaseReference!
+        ref = Database.database().reference()
+        ref.child("users").observeSingleEvent(of: .value, with: { (snapshot) in
+            let value = snapshot.value as? NSDictionary
+            if (value != nil){
+                self.userL.removeAll()
+                
+                for user in value! {
+                    let temp = user.value as? NSDictionary
+                    let username = temp?["userName"] as? String ?? "No Username"
+                    let uid = temp?["uid"] as? String ?? ""
+                    let email = temp?["email"] as? String ?? ""
+                    let pic = temp?["pic"] as? String ?? "0"
+                    let u = User(email: email, userName: username, uid: uid, pic: pic)
+                    self.userL.append(u)
+                    
+                }
+                print("user list updated")
+
+               // print(self.userL)
+
+            }else{
+                self.userL.removeAll()
+                print("user list updated")
+            }
+        })
+        
+    }
     
     func updateUsername(id: String,value: String){
         
@@ -91,54 +203,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                     fetchUser(uid: id) { (user) in
                         self.user = user
                     }
-                    var ref: DatabaseReference!
-                    ref = Database.database().reference()
-                    ref.child("spaces").observe(DataEventType.value, with: { (snapshot) in
-                        let value = snapshot.value as? NSDictionary
-                        if (value != nil){
-                            self.spaceL.removeAll()
-                            
-                            for space in value! {
-                                let temp = space.value as? NSDictionary
-                                let t1 = temp?["u1"] as? String ?? ""
-                                let t2 = temp?["u2"] as? String ?? ""
-                                let t3 = temp?["name"] as? String ?? ""
-                                let t4 = temp?["uid"] as? String ?? ""
-                                let t5 = temp?["numOfPhotos"] as? Int ?? -1
-                                let t6 = temp?["numOfLogs"] as? Int ?? -1
-                                let t7 = temp?["numOfAnniversaries"] as? Int ?? -1
-                                let s = Space(u1: t1, u2: t2, name: t3, uid: t4, numOfPhotos: t5, numOfLogs: t6, numOfAnniversaries: t7)
-                                self.spaceL.append(s)
-                            }
-                            print("space list updated")
-                            //print(self.spaceL)
-                        }else{
-                            print("No Space")
-                        }
-                    })
-                    ref.child("users").observe(DataEventType.value, with: { (snapshot) in
-                        let value = snapshot.value as? NSDictionary
-                        if (value != nil){
-                            self.userL.removeAll()
-                            
-                            for user in value! {
-                                let temp = user.value as? NSDictionary
-                                let username = temp?["userName"] as? String ?? "No Username"
-                                let uid = temp?["uid"] as? String ?? ""
-                                let email = temp?["email"] as? String ?? ""
-                                let pic = temp?["pic"] as? String ?? "0"
-                                let u = User(email: email, userName: username, uid: uid, pic: pic)
-                                self.userL.append(u)
-                                
-                            }
-                            print("user list updated")
-
-                           // print(self.userL)
-
-                        }else{
-                            print("No User")
-                        }
-                    })
+                    trackSpaceListOnce()
+                    trackUserListOnce()
+                    
                     
                 }else{
                     print("No user logged in.")
@@ -166,52 +233,8 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                 fetchUser(uid: currentUser.uid) { (user) in
                     self.user = user
                 }
-                var ref: DatabaseReference!
-                ref = Database.database().reference()
-                ref.child("spaces").observe(DataEventType.value, with: { (snapshot) in
-                    let value = snapshot.value as? NSDictionary
-                    if (value != nil){
-                        self.spaceL.removeAll()
-                        print("updating spaceL")
-                        for space in value! {
-                            let temp = space.value as? NSDictionary
-                            let t1 = temp?["u1"] as? String ?? ""
-                            let t2 = temp?["u2"] as? String ?? ""
-                            let t3 = temp?["name"] as? String ?? ""
-                            let t4 = temp?["uid"] as? String ?? ""
-                            let t5 = temp?["numOfPhotos"] as? Int ?? -1
-                            let t6 = temp?["numOfLogs"] as? Int ?? -1
-                            let t7 = temp?["numOfAnniversaries"] as? Int ?? -1
-                            let s = Space(u1: t1, u2: t2, name: t3, uid: t4, numOfPhotos: t5, numOfLogs: t6, numOfAnniversaries: t7)
-                            self.spaceL.append(s)
-                        }
-                        //print(self.spaceL)
-                    }else{
-                        print("No Space")
-                    }
-                })
-                ref.child("users").observe(DataEventType.value, with: { (snapshot) in
-                    let value = snapshot.value as? NSDictionary
-                    if (value != nil){
-                        self.userL.removeAll()
-                        print("updating userL")
-                        for user in value! {
-                            let temp = user.value as? NSDictionary
-                            let username = temp?["userName"] as? String ?? "No Username"
-                            let uid = temp?["uid"] as? String ?? ""
-                            let email = temp?["email"] as? String ?? ""
-                            let pic = temp?["pic"] as? String ?? "0"
-                            let u = User(email: email, userName: username, uid: uid, pic: pic)
-                            self.userL.append(u)
-                            
-                        }
-
-                       // print(self.userL)
-
-                    }else{
-                        print("No User")
-                    }
-                })
+                self.trackSpaceListOnce()
+                self.trackUserListOnce()
             }
         }
         signedIn = true

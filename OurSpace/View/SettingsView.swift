@@ -51,9 +51,6 @@ struct SettingsView: View {
                 ZStack{
                     
                     WebImage(url: URL(string: googleDelegate.user.pic)!)
-                        .onSuccess { image, data, cacheType in
-                            print("photo success!")
-                        }
                         .placeholder{Image("userphoto")
                             .resizable()
                             .scaledToFit()

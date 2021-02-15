@@ -42,7 +42,13 @@ struct CreateSpaceView: View {
     }
 
     func validateForm() -> Bool{
+        googleDelegate.trackSpaceListOnce()
+        googleDelegate.trackUserListOnce()
+        let result = v()
+        return result
+    }
 
+    func v() -> Bool{
         let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
         let emailTest:NSPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
         let currentUserEmail = Auth.auth().currentUser?.email
