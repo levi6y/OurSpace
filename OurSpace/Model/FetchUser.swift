@@ -13,7 +13,7 @@ func fetchUser(uid: String,completion: @escaping (User) -> ()){
     if (uid == ""){
         return
     }
-    print("Fetching User!")
+    print("Fetching User: " + uid)
     var ref: DatabaseReference!
     ref = Database.database().reference()
     
@@ -25,10 +25,20 @@ func fetchUser(uid: String,completion: @escaping (User) -> ()){
         let username = value?["userName"] as? String ?? "No Username"
         let uid = value?["uid"] as? String ?? ""
         let email = value?["email"] as? String ?? ""
-        var pic = value?["pic"] as? String ?? ""
+        var pic = value?["pic"] as? String ?? "0"
+        
         if (pic == "0" || pic == ""){
+            DispatchQueue.main.async {
+                print("email: " + email)
+                print("userName: " + username)
+                print("uid: " + uid)
+                print("pic: 0")
+                completion(User(email: email, userName: username, uid: uid, pic: "0"))
+            }
+            /*
             let ref = Storage.storage().reference().child("users/userphoto.png")
             // Fetch the download URL
+            
             ref.downloadURL { url, error in
               if let error = error {
                 print(error.localizedDescription)
@@ -36,10 +46,15 @@ func fetchUser(uid: String,completion: @escaping (User) -> ()){
                 pic = url!.absoluteString
                 print("pic: " + pic)
                 DispatchQueue.main.async {
+                    print("email: " + email)
+                    print("userName: " + username)
+                    print("uid: " + uid)
+                    print("pic: " + pic)
                     completion(User(email: email, userName: username, uid: uid, pic: pic))
                 }
               }
             }
+ */
         }else{
             let ref = Storage.storage().reference().child("users/" + uid + "/userphoto")
             // Fetch the download URL
@@ -48,8 +63,9 @@ func fetchUser(uid: String,completion: @escaping (User) -> ()){
                 print(error.localizedDescription)
               } else {
                 pic = url!.absoluteString
-                print("pic: " + pic)
+                
                 DispatchQueue.main.async {
+                    
                     completion(User(email: email, userName: username, uid: uid, pic: pic))
                 }
               }

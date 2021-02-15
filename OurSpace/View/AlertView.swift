@@ -22,7 +22,7 @@ func alertView(msg: String,completion: @escaping (String) -> ()){
         let code = alert.textFields![0].text ?? ""
         
         if code == ""{
-            // Repromoting..
+            
             UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
             return
         }

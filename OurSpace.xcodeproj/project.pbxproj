@@ -24,6 +24,9 @@
 		5A67A3AC25CAEEF5004116C6 /* FetchUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A67A3AB25CAEEF5004116C6 /* FetchUser.swift */; };
 		5A67A3AF25CAF198004116C6 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A67A3AE25CAF198004116C6 /* ImagePicker.swift */; };
 		5A67A3B325CB1A1F004116C6 /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A67A3B225CB1A1F004116C6 /* AlertView.swift */; };
+		5AAA9F7725DA3F5B00921A6A /* Space.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AAA9F7625DA3F5B00921A6A /* Space.swift */; };
+		5AAA9F7A25DA400000921A6A /* FetchSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AAA9F7925DA400000921A6A /* FetchSpace.swift */; };
+		5AAA9F7D25DA4D0900921A6A /* FetchUserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AAA9F7C25DA4D0900921A6A /* FetchUserList.swift */; };
 		7A3E6A0A390F67026D8D1806 /* Pods_OurSpace.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9134034AC266DA616F8C6BB7 /* Pods_OurSpace.framework */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +52,9 @@
 		5A67A3AB25CAEEF5004116C6 /* FetchUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUser.swift; sourceTree = "<group>"; };
 		5A67A3AE25CAF198004116C6 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		5A67A3B225CB1A1F004116C6 /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
+		5AAA9F7625DA3F5B00921A6A /* Space.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Space.swift; sourceTree = "<group>"; };
+		5AAA9F7925DA400000921A6A /* FetchSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchSpace.swift; sourceTree = "<group>"; };
+		5AAA9F7C25DA4D0900921A6A /* FetchUserList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserList.swift; sourceTree = "<group>"; };
 		9134034AC266DA616F8C6BB7 /* Pods_OurSpace.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OurSpace.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -69,6 +75,9 @@
 			children = (
 				5A13489F25B880E30067BD3D /* User.swift */,
 				5A67A3AB25CAEEF5004116C6 /* FetchUser.swift */,
+				5AAA9F7625DA3F5B00921A6A /* Space.swift */,
+				5AAA9F7925DA400000921A6A /* FetchSpace.swift */,
+				5AAA9F7C25DA4D0900921A6A /* FetchUserList.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -291,9 +300,12 @@
 			files = (
 				5A67A3AF25CAF198004116C6 /* ImagePicker.swift in Sources */,
 				5A536F7C2592F1EF00AC16BA /* AppDelegate.swift in Sources */,
+				5AAA9F7725DA3F5B00921A6A /* Space.swift in Sources */,
+				5AAA9F7D25DA4D0900921A6A /* FetchUserList.swift in Sources */,
 				5A536F7E2592F1EF00AC16BA /* SceneDelegate.swift in Sources */,
 				5A536F802592F1EF00AC16BA /* ContentView.swift in Sources */,
 				5A67A38425CAE6BF004116C6 /* CustomTabbar.swift in Sources */,
+				5AAA9F7A25DA400000921A6A /* FetchSpace.swift in Sources */,
 				5A67A37E25CAE63E004116C6 /* CreateSpaceView.swift in Sources */,
 				5A67A38725CAE705004116C6 /* SettingsView.swift in Sources */,
 				5A1348A025B880E30067BD3D /* User.swift in Sources */,

@@ -46,7 +46,7 @@ struct SettingsView: View {
             .background(Color("c2"))
             .shadow(color: Color.white.opacity(0.06), radius: 5, x: 0, y: 5)
             Spacer(minLength: 0)
-            if googleDelegate.user.pic != ""  {
+            if googleDelegate.user.pic != "" && googleDelegate.user.pic != "0" {
                 
                 ZStack{
                     
@@ -65,7 +65,7 @@ struct SettingsView: View {
                         .frame(width: 150, height: 150,alignment: .center)
                         .clipShape(Circle())
                         
-                    
+            
                     if googleDelegate.isLoading{
                         
                         ProgressView()
@@ -86,8 +86,17 @@ struct SettingsView: View {
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 150, height: 150,alignment: .center)
                         .clipShape(Circle())
+                    
+                    if googleDelegate.isLoading{
+                        
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: Color("c2")))
+                    }
                 }
                 .padding(.top,25)
+                .onTapGesture {
+                    googleDelegate.picker.toggle()
+                }
             }
             
             HStack(spacing: 15){

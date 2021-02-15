@@ -22,17 +22,23 @@ struct Home: View {
     @Binding var signuprepasswordVisible: Bool
     @Binding var forgetemail: String
     @State var selectedTab = "Dashboard"
+    @State var createEmail = ""
+    @State var m:String = "Error"
+    @State var show:Bool = false
+    //@State var spacelist:[Space] = [Space]()
+    @State var spaceName:String = ""
+    //@State var userlist:[User] = [User]()
     var edges = UIApplication.shared.windows.first?.safeAreaInsets
     
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)) {
             
-            // Custom Tab Bar....
-            
             ZStack{
-                
-                CreateSpaceView()
+                CreateSpaceView(createEmail: $createEmail,m:$m,show:$show,spaceName:$spaceName)
                     .opacity(selectedTab == "Create" ? 1 : 0)
+                    .alert(isPresented: $show) {
+                        Alert(title: Text(m), message: Text(""), dismissButton: .default(Text("OK")))
+                    }
                 DashboardView()
                     .opacity(selectedTab == "Dashboard" ? 1 : 0)
                 SettingsView(logedin: $logedin,index:$index,loginemail:$loginemail, loginpassword: $loginpassword, passwordVisible: $passwordVisible,signupemail:$signupemail,signuppassword:$signuppassword,signuprepassword:$signuprepassword,signuppasswordVisible: $signuppasswordVisible,signuprepasswordVisible: $signuprepasswordVisible,forgetemail: $forgetemail)

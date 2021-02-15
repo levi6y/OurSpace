@@ -12,4 +12,5 @@ struct User {
     var userName: String
     var uid: String
     var pic: String
+    
 }

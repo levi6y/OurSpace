@@ -34,8 +34,10 @@ struct ContentView: View {
             ZStack{
                 LinearGradient(gradient: .init(colors: [Color("c1"),Color("c2"),Color("c3")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all)
                 
-                if logedin || googleDelegate.signedIn {
+                if logedin || googleDelegate.signedIn{
+                    
                     Home(logedin: $logedin,index:$index,loginemail:$loginemail, loginpassword: $loginpassword, passwordVisible: $loginpasswordVisible,signupemail:$signupemail,signuppassword:$signuppassword,signuprepassword:$signuprepassword,signuppasswordVisible: $signuppasswordVisible,signuprepasswordVisible: $signuprepasswordVisible,forgetemail: $forgetemail)
+                        
                     
                 }else{
 
@@ -55,7 +57,7 @@ struct ContentView: View {
                                 Alert(title: Text(alertMessage), message: Text(""), dismissButton: .default(Text("OK")))
                             }
                         }else if self.index == 1{
-                            SignUp(signupemail:$signupemail,signuppassword:$signuppassword,signuprepassword:$signuprepassword,signuppasswordVisible: $signuppasswordVisible,signuprepasswordVisible: $signuprepasswordVisible,logedin:$logedin,alertMessage:$alertMessage,showingAlert:$showingAlert,index:$index).alert(isPresented: $showingAlert) {
+                            SignUp(signupemail:$signupemail,signuppassword:$signuppassword,signuprepassword:$signuprepassword,signuppasswordVisible: $signuppasswordVisible,signuprepasswordVisible: $signuprepasswordVisible,logedin:$logedin,alertMessage:$alertMessage,showingAlert:$showingAlert,index:$index,loginemail:$loginemail, loginpassword: $loginpassword, passwordVisible: $loginpasswordVisible,forgetemail: $forgetemail).alert(isPresented: $showingAlert) {
                                 Alert(title: Text(alertMessage), message: Text(""), dismissButton: .default(Text("OK")))
                             }
                         }else if self.index == 2{
@@ -117,12 +119,23 @@ struct Login : View {
                 alertMessage = error?.localizedDescription ?? ""
                 showingAlert = true
             }else{
-                
-                print("Signed in with email")
-                logedin = true
-                UserDefaults.standard.set(logedin,forKey: "logedin")
-                
-            
+                let currentUser = Auth.auth().currentUser!
+                if !currentUser.isEmailVerified{
+                    logedin = false
+                    UserDefaults.standard.set(logedin,forKey: "logedin")
+                    alertMessage = "An email has been sent to your email address, please check and verify your email address!"
+                    showingAlert = true
+                }else{
+                    let currentUser = Auth.auth().currentUser!
+                    fetchUser(uid: currentUser.uid) { (user) in
+                        googleDelegate.user = user
+                    }
+                    logedin = true
+                    UserDefaults.standard.set(logedin,forKey: "logedin")
+                    print("Signed in with email")
+                    
+                    
+                }
             }
         }
     }
@@ -220,6 +233,7 @@ struct Forget : View {
 }
 
 struct SignUp : View {
+    @EnvironmentObject var googleDelegate: GoogleDelegate
     @Binding var signupemail: String
     @Binding var signuppassword: String
     @Binding var signuprepassword: String
@@ -229,6 +243,10 @@ struct SignUp : View {
     @Binding var alertMessage: String
     @Binding var showingAlert: Bool
     @Binding var index: Int
+    @Binding var loginemail: String
+    @Binding var loginpassword: String
+    @Binding var passwordVisible: Bool
+    @Binding var forgetemail: String
     func validateForm() -> Bool{
         var valid = true
         let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
@@ -253,6 +271,30 @@ struct SignUp : View {
         
         return valid
     }
+    func signout(){
+        do {
+            try Auth.auth().signOut()
+        } catch let signOutError as NSError {
+            alertMessage = signOutError.localizedDescription
+            logedin = false
+            UserDefaults.standard.set(logedin,forKey: "logedin")
+            showingAlert = true
+        }
+        GIDSignIn.sharedInstance().signOut()
+        googleDelegate.signedIn = false
+        logedin = false
+        UserDefaults.standard.set(logedin,forKey: "logedin")
+        index = 0
+        loginemail = ""
+        loginpassword = ""
+        passwordVisible = false
+        signupemail = ""
+        signuppassword = ""
+        signuprepassword = ""
+        signuppasswordVisible = false
+        signuprepasswordVisible = false
+        forgetemail = ""
+    }
     func signup(){
         hideKeyboard()
         if !validateForm(){
@@ -270,9 +312,17 @@ struct SignUp : View {
                 databasereference.child("users/\(currentUser.uid)/uid").setValue(currentUser.uid)
                 databasereference.child("users/\(currentUser.uid)/email").setValue(currentUser.email!)
                 databasereference.child("users/\(currentUser.uid)/userName").setValue(currentUser.email!)
-                databasereference.child("users/\(currentUser.uid)/pic").setValue("https://firebasestorage.googleapis.com/v0/b/ourspace-ios-69c00.appspot.com/o/users%2Fuserphoto.png?alt=media&token=7eb7a79c-e506-4190-ad46-a2ab3c0a565")
-                logedin = true
-                UserDefaults.standard.set(logedin,forKey: "logedin")
+                databasereference.child("users/\(currentUser.uid)/pic").setValue("0")
+                Auth.auth().currentUser?.sendEmailVerification { (error) in
+                    if(error != nil){
+                        alertMessage = error!.localizedDescription
+                        showingAlert = true
+                    }else{
+                        alertMessage = "An email has been sent to your email address, please check and verify your email address!"
+                        showingAlert = true
+                    }
+                }
+                signout()
             }
         }
     }
@@ -477,13 +527,13 @@ struct passwordField: View {
         }.padding(.vertical,20)
     }
 }
-
-struct ContentView_Previews: PreviewProvider {
-   @EnvironmentObject var googleDelegate: GoogleDelegate
-   static var previews: some View {
-      ContentView().environmentObject(GoogleDelegate())
-  }
-}
+//
+//struct ContentView_Previews: PreviewProvider {
+//   @EnvironmentObject var googleDelegate: GoogleDelegate
+//   static var previews: some View {
+//      ContentView().environmentObject(GoogleDelegate())
+//  }
+//}
 
 
 
