@@ -26,7 +26,7 @@ struct ContentView: View {
     @State var showingAlert = false
     @State var forgetemail = ""
 
-
+    
     var body: some View {
         
         Group{
@@ -41,9 +41,11 @@ struct ContentView: View {
                     
                 }else{
 
+                    
                     VStack{
-                        Spacer()
+                        
                         Logo()
+                        Spacer()
                         HStack{
                             existingUserButton(index: $index)
                             newUserButton(index: $index)
@@ -56,27 +58,48 @@ struct ContentView: View {
                             Login(loginemail:$loginemail, loginpassword: $loginpassword, passwordVisible: $loginpasswordVisible,showingAlert:$showingAlert,logedin:$logedin,alertMessage:$alertMessage,index:$index).alert(isPresented: $showingAlert) {
                                 Alert(title: Text(alertMessage), message: Text(""), dismissButton: .default(Text("OK")))
                             }
+                            
+                            
+                            
                         }else if self.index == 1{
                             SignUp(signupemail:$signupemail,signuppassword:$signuppassword,signuprepassword:$signuprepassword,signuppasswordVisible: $signuppasswordVisible,signuprepasswordVisible: $signuprepasswordVisible,logedin:$logedin,alertMessage:$alertMessage,showingAlert:$showingAlert,index:$index,loginemail:$loginemail, loginpassword: $loginpassword, passwordVisible: $loginpasswordVisible,forgetemail: $forgetemail).alert(isPresented: $showingAlert) {
                                 Alert(title: Text(alertMessage), message: Text(""), dismissButton: .default(Text("OK")))
                             }
+                            Spacer(minLength: 100)
                         }else if self.index == 2{
                             Forget(forgetemail:$forgetemail,showingAlert:$showingAlert,alertMessage:$alertMessage,index:$index).alert(isPresented: $showingAlert) {
                                 Alert(title: Text(alertMessage), message: Text(""), dismissButton: .default(Text("OK")))
                             }
+                            Spacer(minLength: 200)
                         }
-                
-                        
-                        orDivider()
-                        
-                        GoogleSignInButton()
+                        if self.index == 0{
+                            orDivider()
+                            
+                            GoogleSignInButton()
+                        }
                         
                         Spacer()
                     }.padding()
                     
                 }
+                if googleDelegate.isLoading {
+                    
+                    GeometryReader{_ in
+                        
+                        Loader()
+                        
+                    }.alignmentGuide(HorizontalAlignment.center){_ in 72}
+                    .alignmentGuide(VerticalAlignment.center){_ in 60}
+                    .background(LinearGradient(gradient: .init(colors: [Color("c1"),Color("c2"),Color("c3")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all).edgesIgnoringSafeArea(.all))
+    
+                }
             }
-        }.onAppear{GIDSignIn.sharedInstance().restorePreviousSignIn()} // uncomment to run on real device.
+        }.onAppear{
+            
+            GIDSignIn.sharedInstance().restorePreviousSignIn()
+        } // uncomment to run on real device.
+        
+        
         
         
         
@@ -107,16 +130,19 @@ struct Login : View {
     @Binding var logedin: Bool
     @Binding var alertMessage: String
     @Binding var index: Int
+
     @EnvironmentObject var googleDelegate: GoogleDelegate
     
     func login(){
         hideKeyboard()
+        googleDelegate.isLoading = true
         
         Auth.auth().signIn(withEmail: loginemail, password: loginpassword) { (result, error) in
             if error != nil {
                 logedin = false
                 UserDefaults.standard.set(logedin,forKey: "logedin")
                 alertMessage = error?.localizedDescription ?? ""
+                googleDelegate.isLoading = false
                 showingAlert = true
             }else{
                 let currentUser = Auth.auth().currentUser!
@@ -124,7 +150,9 @@ struct Login : View {
                     logedin = false
                     UserDefaults.standard.set(logedin,forKey: "logedin")
                     alertMessage = "An email has been sent to your email address, please check and verify your email address!"
+                    googleDelegate.isLoading = false
                     showingAlert = true
+                
                 }else{
                     let currentUser = Auth.auth().currentUser!
                     fetchUser(uid: currentUser.uid) { (user) in
@@ -132,6 +160,7 @@ struct Login : View {
                     }
                     logedin = true
                     UserDefaults.standard.set(logedin,forKey: "logedin")
+                    googleDelegate.isLoading = false
                     print("Signed in with email")
                     
                     
@@ -181,19 +210,28 @@ struct Forget : View {
     @Binding var showingAlert: Bool
     @Binding var alertMessage: String
     @Binding var index: Int
+
     func forget(){
+        hideKeyboard()
+        googleDelegate.isLoading = true
         if forgetemail == ""{
             alertMessage = "Please enter email address!"
+            googleDelegate.isLoading = false
             showingAlert = true
             return
         }
-        hideKeyboard()
+        
+        
         Auth.auth().sendPasswordReset(withEmail: forgetemail) { error in
             if error != nil{
                 alertMessage = error?.localizedDescription ?? ""
+                forgetemail = ""
+                googleDelegate.isLoading = false
                 showingAlert = true
             }else{
                 alertMessage = "Email Sent!"
+                forgetemail = ""
+                googleDelegate.isLoading = false
                 showingAlert = true
             }
         }
@@ -247,7 +285,9 @@ struct SignUp : View {
     @Binding var loginpassword: String
     @Binding var passwordVisible: Bool
     @Binding var forgetemail: String
+
     func validateForm() -> Bool{
+        
         var valid = true
         let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
         let emailTest:NSPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
@@ -272,38 +312,46 @@ struct SignUp : View {
         return valid
     }
     func signout(){
+        
         do {
             try Auth.auth().signOut()
+            GIDSignIn.sharedInstance().signOut()
+            googleDelegate.signedIn = false
+            logedin = false
+            UserDefaults.standard.set(logedin,forKey: "logedin")
+            index = 0
+            loginemail = ""
+            loginpassword = ""
+            passwordVisible = false
+            signupemail = ""
+            signuppassword = ""
+            signuprepassword = ""
+            signuppasswordVisible = false
+            signuprepasswordVisible = false
+            forgetemail = ""
         } catch let signOutError as NSError {
             alertMessage = signOutError.localizedDescription
             logedin = false
             UserDefaults.standard.set(logedin,forKey: "logedin")
+            googleDelegate.isLoading = false
             showingAlert = true
         }
-        GIDSignIn.sharedInstance().signOut()
-        googleDelegate.signedIn = false
-        logedin = false
-        UserDefaults.standard.set(logedin,forKey: "logedin")
-        index = 0
-        loginemail = ""
-        loginpassword = ""
-        passwordVisible = false
-        signupemail = ""
-        signuppassword = ""
-        signuprepassword = ""
-        signuppasswordVisible = false
-        signuprepasswordVisible = false
-        forgetemail = ""
+        
+        googleDelegate.isLoading = false
+
     }
     func signup(){
         hideKeyboard()
+        googleDelegate.isLoading = true
         if !validateForm(){
+            googleDelegate.isLoading = false
             return
         }
         
         Auth.auth().createUser(withEmail: signupemail, password: signuppassword){ (result, error) in
             if error != nil {
                 alertMessage = error?.localizedDescription ?? ""
+                googleDelegate.isLoading = false
                 showingAlert = true
             }else{
                 let currentUser = Auth.auth().currentUser!
@@ -315,14 +363,15 @@ struct SignUp : View {
                 databasereference.child("users/\(currentUser.uid)/pic").setValue("0")
                 Auth.auth().currentUser?.sendEmailVerification { (error) in
                     if(error != nil){
+                        signout()
                         alertMessage = error!.localizedDescription
                         showingAlert = true
                     }else{
-                        alertMessage = "An email has been sent to your email address, please check and verify your email address!"
+                        signout()
+                        alertMessage = "You created a new account, before logging in, please verify your email address! (An email has been sent to your email address)"
                         showingAlert = true
                     }
                 }
-                signout()
             }
         }
     }
@@ -446,53 +495,6 @@ struct orDivider: View {
             Color.white.opacity(0.7)
                 .frame(width: 35, height: 1)
         }.padding(.top,10)
-    }
-}
-
-struct signOutButton: View {
-    @EnvironmentObject var googleDelegate: GoogleDelegate
-    @Binding var logedin: Bool
-    @Binding var index: Int
-    @Binding var loginemail: String
-    @Binding var loginpassword: String
-    @Binding var passwordVisible: Bool
-    @Binding var signupemail: String
-    @Binding var signuppassword: String
-    @Binding var signuprepassword: String
-    @Binding var signuppasswordVisible: Bool
-    @Binding var signuprepasswordVisible: Bool
-    @Binding var forgetemail: String
-    var body: some View {
-        Button(action: {
-            do {
-                try Auth.auth().signOut()
-            } catch let signOutError as NSError {
-              print ("Error signing out: %@", signOutError)
-                logedin = false
-                UserDefaults.standard.set(logedin,forKey: "logedin")
-            }
-            GIDSignIn.sharedInstance().signOut()
-            googleDelegate.signedIn = false
-            logedin = false
-            UserDefaults.standard.set(logedin,forKey: "logedin")
-            index = 0
-            loginemail = ""
-            loginpassword = ""
-            passwordVisible = false
-            signupemail = ""
-            signuppassword = ""
-            signuprepassword = ""
-            signuppasswordVisible = false
-            signuprepasswordVisible = false
-            forgetemail = ""
-        }){
-            Text("Sign Out")
-                .foregroundColor(.white)
-                .fontWeight(.bold)
-                .padding(.vertical,10)
-                .frame(width: (UIScreen.main.bounds.width - 50) / 2)
-        }.background(Color.clear)
-        .clipShape(Capsule())
     }
 }
 

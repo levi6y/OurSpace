@@ -20,7 +20,7 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
     @Published var img_data = Data(count: 0)
     
     // Loading View..
-    @Published var isLoading = false
+    @Published var isLoading = true
     @Published var spaceL:[Space] = [Space]()
     @Published var userL:[User] = [User]()
     
@@ -44,9 +44,10 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
             ref.downloadURL { (url, error) in
                 if error != nil {
                     print(error!.localizedDescription)
+                    self.isLoading = false
                     return
                 }
-                self.isLoading = false
+                
                 let currentUser = Auth.auth().currentUser!
                 var databasereference: DatabaseReference!
                 databasereference = Database.database().reference()
@@ -54,17 +55,17 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                 fetchUser(uid: currentUser.uid) { (user) in
                     self.user = user
                 }
+                self.isLoading = false
             }
         }
         
     }
     
     func updateDetails(field : String){
-        
         alertView(msg: "") { (txt) in
             
             if txt != ""{
-                
+                self.isLoading = true
                 self.updateUsername(id: "userName", value: txt)
             }
         }
@@ -122,7 +123,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
             }
         })
     }
-    
+    func hideKeyboard(){
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
     func trackSpaceListOnce(){
         var ref: DatabaseReference!
         ref = Database.database().reference()
@@ -192,9 +195,12 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         databasereference.child("users/\(currentUser.uid)/userName").setValue(value)
         fetchUser(uid: currentUser.uid) { (user) in
             self.user = user
+            self.isLoading = false
         }
     }
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        hideKeyboard()
+        self.isLoading = true
         if let error = error {
             if (error as NSError).code == GIDSignInErrorCode.hasNoAuthInKeychain.rawValue {
                 
@@ -202,25 +208,33 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                     let id = Auth.auth().currentUser!.uid
                     fetchUser(uid: id) { (user) in
                         self.user = user
+                        self.isLoading = false
                     }
                     trackSpaceListOnce()
                     trackUserListOnce()
                     
                     
                 }else{
+                    self.isLoading = false
                     print("No user logged in.")
                 }
             } else {
+                self.isLoading = false
                 print("\(error.localizedDescription)")
             }
             return
         }
-        guard let authentication = user.authentication else { return }
+        guard let authentication = user.authentication else {
+            self.isLoading = false
+            return
+            
+        }
           let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
                                                             accessToken: authentication.accessToken)
-        
+        hideKeyboard()
         Auth.auth().signIn(with: credential){ (result, error) in
             if error != nil {
+                self.isLoading = false
                 print(error!.localizedDescription)
             }else{
                 
@@ -232,12 +246,15 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                 databasereference.child("users/\(currentUser.uid)/email").setValue(currentUser.email!)
                 fetchUser(uid: currentUser.uid) { (user) in
                     self.user = user
+                    self.trackSpaceListOnce()
+                    self.trackUserListOnce()
+                    self.signedIn = true
+                    self.isLoading = false
                 }
-                self.trackSpaceListOnce()
-                self.trackUserListOnce()
+                
             }
         }
-        signedIn = true
+        
     }
 
     

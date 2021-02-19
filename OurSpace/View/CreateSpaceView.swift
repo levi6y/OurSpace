@@ -37,6 +37,7 @@ struct CreateSpaceView: View {
         ref.child(uid).child("numOfAnniversaries").setValue(0)
  */
         m = "Space Created!"
+        googleDelegate.isLoading = false
         show = true
         return
     }
@@ -56,14 +57,17 @@ struct CreateSpaceView: View {
 
         if e.isEmpty || spaceName.isEmpty{
             m = "email address and space name are required."
+            
             show = true
             return false
         }else if !(emailTest.evaluate(with: e)){
             m = "Invalid Email address."
+
             show = true
             return false
         }else if currentUserEmail == e{
             m = "Can not create a space with yourself."
+
             show = true
             return false
         }
@@ -76,6 +80,7 @@ struct CreateSpaceView: View {
         }
         if !tempbool {
             m = "This email address does not exist."
+
             show = true
             return false
         }
@@ -84,10 +89,12 @@ struct CreateSpaceView: View {
             if currentUserEmail == space.u1 || currentUserEmail == space.u2{
                 if space.name == spaceName{
                     m = "You already have a space with this name."
+
                     show = true
                     return false
                 }else if (currentUserEmail == space.u1 && e == space.u2) || (currentUserEmail == space.u2 && e == space.u1){
                     m = "You can only have one space with this user."
+
                     show = true
                     return false
                 }
@@ -155,7 +162,11 @@ struct CreateSpaceView: View {
                 
                 Button(action:{
                     hideKeyboard()
+                    googleDelegate.isLoading = true
+                    
+                    
                     if !validateForm(){
+                        googleDelegate.isLoading = false
                         return
                     }
                     createSpace()

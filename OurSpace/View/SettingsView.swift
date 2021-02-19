@@ -157,26 +157,27 @@ struct SettingsView: View {
         var body: some View {
             Button(action: {
                 do {
+                    googleDelegate.isLoading = true
                     try Auth.auth().signOut()
-                } catch let signOutError as NSError {
-                  print ("Error signing out: %@", signOutError)
+                    GIDSignIn.sharedInstance().signOut()
+                    googleDelegate.signedIn = false
                     logedin = false
                     UserDefaults.standard.set(logedin,forKey: "logedin")
+                    index = 0
+                    loginemail = ""
+                    loginpassword = ""
+                    passwordVisible = false
+                    signupemail = ""
+                    signuppassword = ""
+                    signuprepassword = ""
+                    signuppasswordVisible = false
+                    signuprepasswordVisible = false
+                    forgetemail = ""
+                } catch let signOutError as NSError {
+                    googleDelegate.isLoading = false
+                    print ("Error signing out: %@", signOutError)
                 }
-                GIDSignIn.sharedInstance().signOut()
-                googleDelegate.signedIn = false
-                logedin = false
-                UserDefaults.standard.set(logedin,forKey: "logedin")
-                index = 0
-                loginemail = ""
-                loginpassword = ""
-                passwordVisible = false
-                signupemail = ""
-                signuppassword = ""
-                signuprepassword = ""
-                signuppasswordVisible = false
-                signuprepasswordVisible = false
-                forgetemail = ""
+                googleDelegate.isLoading = false
             }){
                 Text("Sign Out")
                     .foregroundColor(Color("c2"))
