@@ -90,7 +90,7 @@ struct ContentView: View {
                         
                     }.alignmentGuide(HorizontalAlignment.center){_ in 72}
                     .alignmentGuide(VerticalAlignment.center){_ in 60}
-                    .background(LinearGradient(gradient: .init(colors: [Color("c1"),Color("c2"),Color("c3")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all).edgesIgnoringSafeArea(.all))
+                    .background(LinearGradient(gradient: .init(colors: [Color("c1"),Color("c2"),Color("c3")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all))
     
                 }
             }
