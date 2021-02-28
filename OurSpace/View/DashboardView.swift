@@ -47,12 +47,12 @@ struct DashboardView: View {
                         
                         cellView(edit: edit, data: i).onTapGesture {
                             selected = i
-                        }.shadow(radius: 2)
+                        }
                     }
                     
                 }.padding()
                 
-            }.padding(.top, 30)
+            }.shadow(radius: 5).padding(.top, 30)
             
             
             
@@ -73,8 +73,10 @@ struct cellView : View{
         HStack{
         
             VStack(alignment: .leading, spacing: 5){
-                Text("Space Name:").lineLimit(1)
-                Text(data.name).lineLimit(1)
+                Text("Space Name:").foregroundColor(Color("c3"))
+                    .fontWeight(.bold).lineLimit(1)
+                Text(data.name).foregroundColor(Color("c3"))
+                    .fontWeight(.bold).lineLimit(1)
             }
             
             
@@ -82,11 +84,15 @@ struct cellView : View{
             
             VStack(alignment: .leading, spacing: 5){
                 if (data.u1 == googleDelegate.user.email){
-                    Text("This is your space with:").lineLimit(1)
-                    Text(data.u2).lineLimit(1)
+                    Text("This is your space with:").foregroundColor(Color("c3"))
+                        .fontWeight(.bold).lineLimit(1)
+                    Text(data.u2).foregroundColor(Color("c3"))
+                        .fontWeight(.bold).lineLimit(1)
                 }else{
-                    Text("This is your space with:").lineLimit(1)
-                    Text(data.u1).lineLimit(1)
+                    Text("This is your space with:").foregroundColor(Color("c3"))
+                        .fontWeight(.bold).lineLimit(1)
+                    Text(data.u1).foregroundColor(Color("c3"))
+                        .fontWeight(.bold).lineLimit(1)
                 }
                 
             }

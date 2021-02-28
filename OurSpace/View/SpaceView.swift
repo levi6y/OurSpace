@@ -31,16 +31,22 @@ struct SpaceView: View {
             .background(Color("c2"))
             .shadow(color: Color.white.opacity(0.06), radius: 5, x: 0, y: 5)
             
-            VStack(spacing: 20){
+            
+            ScrollView(.vertical, showsIndicators: false) {
                 
-                spaceFunction(space: space, txt: "Photo").shadow(radius: 2)
+                VStack(spacing: 20){
+                    
+                    spaceFunction(space: space, txt: "Photo")
+                    
+                    spaceFunction(space: space, txt: "Log")
+                    
+                    spaceFunction(space: space, txt: "Anniversary")
+                    
+                }.padding()
                 
-                spaceFunction(space: space, txt: "Log").shadow(radius: 2)
-                
-                spaceFunction(space: space, txt: "Anniversary").shadow(radius: 2)
-                
-            }.padding()
-            .padding(.top,30)
+            }.shadow(radius: 5).padding(.top, 30)
+            
+            
             Spacer()
         }
     }
@@ -53,20 +59,24 @@ struct spaceFunction : View{
     var txt: String
     @EnvironmentObject var googleDelegate: GoogleDelegate
     var body: some View{
-        HStack{
-            
-            Spacer()
-            Text(" ")
-            Text(" ")
-            Text(txt)
-            Text(" ")
-            Text(" ")
-            Spacer()
-            
-            
         
-        }.padding()
+        HStack{
+            Spacer()
+            VStack(alignment: .leading, spacing: 5){
+                Text(txt)
+                    .foregroundColor(Color("c3"))
+                    .fontWeight(.bold)
+            }
+            
+            
+            Spacer()
+            
+            
+            
+        }
+        .padding()
         .background(RoundedRectangle(cornerRadius: 8).fill(Color.white))
         .animation(.spring())
+        
     }
 }

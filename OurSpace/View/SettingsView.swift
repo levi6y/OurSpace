@@ -180,7 +180,7 @@ struct SettingsView: View {
                 googleDelegate.isLoading = false
             }){
                 Text("Sign Out")
-                    .foregroundColor(Color("c2"))
+                    .foregroundColor(Color("c3"))
                     .fontWeight(.bold)
                     .padding(.vertical,10)
                     .frame(width: (UIScreen.main.bounds.width - 50) / 2)
