@@ -9,25 +9,40 @@ import SwiftUI
 
 func alertView(msg: String,completion: @escaping (String) -> ()){
     
-    let alert = UIAlertController(title: "Update Username", message: msg, preferredStyle: .alert)
     
-    alert.addTextField { (txt) in
-        txt.placeholder = msg.contains("Verification") ? "123456" : ""
+    if (msg == "username"){
+        let alert = UIAlertController(title: "Update Username", message: msg, preferredStyle: .alert)
+        alert.addTextField { (txt) in
+            txt.placeholder = msg.contains("Verification") ? "123456" : ""
+        }
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .destructive))
+        
+        alert.addAction(UIAlertAction(title: msg.contains("Verification") ? "Verify" : "Update", style: .default, handler: { (_) in
+            
+            let code = alert.textFields![0].text ?? ""
+            
+            if code == ""{
+                
+                UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
+                return
+            }
+            completion(code)
+        }))
+        UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
+    }else if(msg == "delete"){
+        let alert = UIAlertController(title: "Delete Space", message: "", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .destructive))
+        
+        alert.addAction(UIAlertAction(title: msg.contains("Verification") ? "Verify" : "Delete", style: .default, handler: { (_) in
+            
+            
+            completion("delete")
+        }))
+        UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
     }
     
-    alert.addAction(UIAlertAction(title: "Cancel", style: .destructive))
     
-    alert.addAction(UIAlertAction(title: msg.contains("Verification") ? "Verify" : "Update", style: .default, handler: { (_) in
-        
-        let code = alert.textFields![0].text ?? ""
-        
-        if code == ""{
-            
-            UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
-            return
-        }
-        completion(code)
-    }))
     
-    UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
 }

@@ -43,7 +43,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       -> Bool {
       return GIDSignIn.sharedInstance().handle(url)
     }
-
+    
+    
+    
     
     func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
         // Called when the user discards a scene session.
@@ -51,7 +53,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
 
-
+    
+    
 }
 
 

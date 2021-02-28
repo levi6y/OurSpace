@@ -45,7 +45,7 @@ struct SettingsView: View {
             // Top Shadow Effect...
             .background(Color("c2"))
             .shadow(color: Color.white.opacity(0.06), radius: 5, x: 0, y: 5)
-            Spacer(minLength: 0)
+            
             if googleDelegate.user.pic != "" && googleDelegate.user.pic != "0" {
                 
                 ZStack{
@@ -121,12 +121,12 @@ struct SettingsView: View {
 
             // LogOut Button...
             Spacer(minLength: 0)
-            Spacer(minLength: 0)
-            Spacer(minLength: 0)
+            
             signOutButton(logedin: $logedin,index:$index,loginemail:$loginemail, loginpassword: $loginpassword, passwordVisible: $passwordVisible,signupemail:$signupemail,signuppassword:$signuppassword,signuprepassword:$signuprepassword,signuppasswordVisible: $signuppasswordVisible,signuprepasswordVisible: $signuprepasswordVisible,forgetemail: $forgetemail)
-                .padding(.bottom,edges!.bottom == 0 ? 55 : 0)
-            Spacer(minLength: 0)
-            Spacer(minLength: 0)
+                .padding(.bottom,100)
+                
+                
+            
             
             
         }
@@ -186,6 +186,7 @@ struct SettingsView: View {
                     .frame(width: (UIScreen.main.bounds.width - 50) / 2)
             }.background(Color.white)
             .clipShape(Capsule())
+            .shadow(radius: 5)
         }
     }
 }

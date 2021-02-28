@@ -8,19 +8,22 @@ import SwiftUI
 
 struct CustomTabbar: View {
     @Binding var selectedTab : String
-    
+    @Binding var edit: Bool
+    @Binding var space: currentSpace
     var body: some View {
         
         HStack(spacing: 65){
             
-            TabButton(title: "Create", selectedTab: $selectedTab)
+            TabButton(title: "Create", selectedTab: $selectedTab,edit:$edit,space: $space)
             
-            TabButton(title: "Dashboard", selectedTab: $selectedTab)
-            TabButton(title: "Settings", selectedTab: $selectedTab)
+            TabButton(title: "Dashboard", selectedTab: $selectedTab,edit:$edit,space: $space)
+            TabButton(title: "Settings", selectedTab: $selectedTab,edit:$edit,space: $space)
         }
         .padding(.horizontal)
         .background(Color.white)
         .clipShape(Capsule())
+        .animation(.spring())
+        .shadow(radius: 5)
     }
 }
 
@@ -29,15 +32,22 @@ struct TabButton : View {
     var title : String
     @Binding var selectedTab : String
     @EnvironmentObject var googleDelegate: GoogleDelegate
+    @Binding var edit: Bool
+    @Binding var space: currentSpace
     var body: some View{
         
         Button(action: {
             selectedTab = title
+            space = currentSpace(id: -1,u1: "", u2: "", name: "", uid: "", numOfPhotos: 0, numOfLogs: 0, numOfAnniversaries: 0)
             if title == "Create"{
                 googleDelegate.trackUserListOnce()
                 googleDelegate.trackSpaceListOnce()
+                edit = false
+                
             }else if title == "Dashboard"{
                 googleDelegate.trackSpaceListOnce()
+            }else if title == "Settings"{
+                edit = false
             }
             
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)

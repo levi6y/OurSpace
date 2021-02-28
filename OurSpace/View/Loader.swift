@@ -19,10 +19,12 @@ struct Loader: View {
                 .rotationEffect(.init(degrees: self.animate ? 360 : 0))
                 .animation(Animation.linear(duration: 0.7)
                             .repeatForever(autoreverses: false))
-            Text("Please Wait..").padding(.top,10)
+            Text("Please Wait...").padding(.top,10)
             
         }
         .padding(20)
+        .shadow(radius: 2)
+        .frame(width: 160, height: 120)
         .background(Color.white)
         .cornerRadius(15)
         .onAppear{

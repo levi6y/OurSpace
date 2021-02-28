@@ -8,9 +8,116 @@
 import SwiftUI
 
 struct DashboardView: View {
+    @EnvironmentObject var googleDelegate: GoogleDelegate
+    var edges = UIApplication.shared.windows.first?.safeAreaInsets
+    @Binding var selected: currentSpace
+    @Binding var edit: Bool
+
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack{
+            
+            HStack{
+                
+                Text("Dashboard")
+                    .font(.largeTitle)
+                    .fontWeight(.heavy)
+                    .foregroundColor(.white)
+                
+                Spacer(minLength: 0)
+                Button(action: {
+                    
+                    self.edit.toggle()
+                    
+                }) {
+                    
+                    Text(self.edit ? "Done" : "Edit").foregroundColor(.white)
+                }
+            }
+            .padding()
+            .padding(.top,edges!.top)
+            .background(Color("c2"))
+            .shadow(color: Color.white.opacity(0.06), radius: 5, x: 0, y: 5)
+            //Spacer(minLength: 0)
+            ScrollView(.vertical, showsIndicators: false) {
+                
+                VStack(spacing: 20){
+                    
+                    ForEach(self.googleDelegate.currentUsersSpaceL){ i in
+                        
+                        cellView(edit: edit, data: i).onTapGesture {
+                            selected = i
+                        }.shadow(radius: 2)
+                    }
+                    
+                }.padding()
+                
+            }.padding(.top, 30)
+            
+            
+            
+            
+            //Spacer(minLength: 0)
+            
+            
+            
+        }
     }
 }
 
+struct cellView : View{
+    var edit: Bool
+    var data: currentSpace
+    @EnvironmentObject var googleDelegate: GoogleDelegate
+    var body: some View{
+        HStack{
+        
+            VStack(alignment: .leading, spacing: 5){
+                Text("Space Name:").lineLimit(1)
+                Text(data.name).lineLimit(1)
+            }
+            
+            
+            Spacer()
+            
+            VStack(alignment: .leading, spacing: 5){
+                if (data.u1 == googleDelegate.user.email){
+                    Text("This is your space with:").lineLimit(1)
+                    Text(data.u2).lineLimit(1)
+                }else{
+                    Text("This is your space with:").lineLimit(1)
+                    Text(data.u1).lineLimit(1)
+                }
+                
+            }
+            if edit{
+                Button(action: {
+                    if self.data.uid != ""{
+                        
+                        self.googleDelegate.deleteSpace(uid: self.data.uid)
+                    }
+                }){
+                    Image(systemName: "minus.circle").font(.title)
+                }.foregroundColor(.red)
+            }
+        }
+        .padding()
+        .background(RoundedRectangle(cornerRadius: 8).fill(Color.white))
+        .animation(.spring())
+        
+    }
+}
+
+
+struct currentSpace: Identifiable{
+    var id: Int
+    var u1: String
+    var u2: String
+    var name: String
+    var uid: String
+    var numOfPhotos: Int
+    var numOfLogs: Int
+    var numOfAnniversaries: Int
+    
+}
 

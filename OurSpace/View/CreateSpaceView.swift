@@ -120,7 +120,7 @@ struct CreateSpaceView: View {
             .padding(.top,edges!.top)
             .background(Color("c2"))
             .shadow(color: Color.white.opacity(0.06), radius: 5, x: 0, y: 5)
-            Spacer(minLength: 0)
+            //Spacer(minLength: 0)
             
             
             //Logo()
@@ -159,6 +159,7 @@ struct CreateSpaceView: View {
                 .background(Color.white)
                 .cornerRadius(10)
                 .padding(.bottom,40)
+                .shadow(radius: 5)
                 
                 Button(action:{
                     hideKeyboard()
@@ -183,6 +184,7 @@ struct CreateSpaceView: View {
                     .shadow(radius: 15)
                     
             }.padding()
+            .padding(.top,30)
             Spacer(minLength: 0)
             
             

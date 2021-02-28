@@ -27,6 +27,8 @@ struct Home: View {
     @State var show:Bool = false
     //@State var spacelist:[Space] = [Space]()
     @State var spaceName:String = ""
+    @State var selected: currentSpace = currentSpace(id: -1,u1: "", u2: "", name: "", uid: "", numOfPhotos: 0, numOfLogs: 0, numOfAnniversaries: 0)
+    @State var edit = false
     //@State var userlist:[User] = [User]()
     var edges = UIApplication.shared.windows.first?.safeAreaInsets
     
@@ -34,19 +36,24 @@ struct Home: View {
         ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)) {
             
             ZStack{
-                CreateSpaceView(createEmail: $createEmail,m:$m,show:$show,spaceName:$spaceName)
-                    .opacity(selectedTab == "Create" ? 1 : 0)
-                    .alert(isPresented: $show) {
-                        Alert(title: Text(m), message: Text(""), dismissButton: .default(Text("OK")))
-                    }
-                DashboardView()
-                    .opacity(selectedTab == "Dashboard" ? 1 : 0)
-                SettingsView(logedin: $logedin,index:$index,loginemail:$loginemail, loginpassword: $loginpassword, passwordVisible: $passwordVisible,signupemail:$signupemail,signuppassword:$signuppassword,signuprepassword:$signuprepassword,signuppasswordVisible: $signuppasswordVisible,signuprepasswordVisible: $signuprepasswordVisible,forgetemail: $forgetemail)
-                    .opacity(selectedTab == "Settings" ? 1 : 0)
+                if (selected.uid != ""){
+                    SpaceView(space: $selected)
+                }else{
+                    CreateSpaceView(createEmail: $createEmail,m:$m,show:$show,spaceName:$spaceName)
+                        .opacity(selectedTab == "Create" ? 1 : 0)
+                        .alert(isPresented: $show) {
+                            Alert(title: Text(m), message: Text(""), dismissButton: .default(Text("OK")))
+                        }
+                    DashboardView(selected: $selected, edit: $edit)
+                        .opacity(selectedTab == "Dashboard" ? 1 : 0)
+                    SettingsView(logedin: $logedin,index:$index,loginemail:$loginemail, loginpassword: $loginpassword, passwordVisible: $passwordVisible,signupemail:$signupemail,signuppassword:$signuppassword,signuprepassword:$signuprepassword,signuppasswordVisible: $signuppasswordVisible,signuprepasswordVisible: $signuprepasswordVisible,forgetemail: $forgetemail)
+                        .opacity(selectedTab == "Settings" ? 1 : 0)
+                }
+                
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
-            CustomTabbar(selectedTab: $selectedTab)
+            CustomTabbar(selectedTab: $selectedTab, edit: $edit,space: $selected)
                 .padding(.bottom,edges!.bottom == 0 ? 15 : 0)
                 .padding(.horizontal,10)
         }

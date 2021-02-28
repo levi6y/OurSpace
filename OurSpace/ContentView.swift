@@ -37,7 +37,7 @@ struct ContentView: View {
                 if logedin || googleDelegate.signedIn{
                     
                     Home(logedin: $logedin,index:$index,loginemail:$loginemail, loginpassword: $loginpassword, passwordVisible: $loginpasswordVisible,signupemail:$signupemail,signuppassword:$signuppassword,signuprepassword:$signuprepassword,signuppasswordVisible: $signuppasswordVisible,signuprepasswordVisible: $signuprepasswordVisible,forgetemail: $forgetemail)
-                        
+                    
                     
                 }else{
 
@@ -88,11 +88,13 @@ struct ContentView: View {
                         
                         Loader()
                         
-                    }.alignmentGuide(HorizontalAlignment.center){_ in 72}
+                    }.alignmentGuide(HorizontalAlignment.center){_ in 80}
                     .alignmentGuide(VerticalAlignment.center){_ in 60}
                     .background(LinearGradient(gradient: .init(colors: [Color("c1"),Color("c2"),Color("c3")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all))
+                    .shadow(radius: 5)
     
                 }
+                
             }
         }.onAppear{
             
@@ -184,6 +186,7 @@ struct Login : View {
             .cornerRadius(10)
             .padding(.top,25)
             .padding(.bottom,40)
+            .shadow(radius: 5)
             
             Button(action:{
                 login()
@@ -251,6 +254,7 @@ struct Forget : View {
             .cornerRadius(10)
             .padding(.top,25)
             .padding(.bottom,40)
+            .shadow(radius: 5)
             
             Button(action:{
                 forget()
@@ -393,6 +397,7 @@ struct SignUp : View {
             .cornerRadius(10)
             .padding(.top,25)
             .padding(.bottom,40)
+            .shadow(radius: 5)
             
             Button(action:{
                 signup()
