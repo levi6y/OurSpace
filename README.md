@@ -13,3 +13,7 @@
 
 19 Feb
 1. implement Loading Screen for all existing functions.
+
+28 Feb
+1. implement UI for displaying and deleting spaces.
+2. implement UI for selected space.
