@@ -17,14 +17,17 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
  
     // Image Picker For Updating Image...
     @Published var picker = false
+    @Published var picker2 = false
     @Published var img_data = Data(count: 0)
+    @Published var img_data2 = Data(count: 0)
     
     // Loading View..
     @Published var isLoading = true
     @Published var spaceL:[Space] = [Space]()
     @Published var currentUsersSpaceL:[currentSpace] = [currentSpace]()
     @Published var userL:[User] = [User]()
-    
+    @Published var images:[image] = []
+    @Published var selectedSpace: currentSpace = currentSpace(id: -1,u1: "", u2: "", name: "", uid: "", numOfPhotos: 0, numOfLogs: 0, numOfAnniversaries: 0)
     
     func updateImage(){
         
@@ -61,6 +64,110 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         }
         
     }
+    func uploadPhoto(){
+        
+        isLoading = true
+        // File located on disk
+        
+        // Create a reference to the file you want to upload
+        guard let u:String = Database.database().reference().childByAutoId().key else { return }
+        let ref = Storage.storage().reference().child("spaces/" + selectedSpace.uid + "/photo/" + u)
+        
+        
+        // Upload the file to the path "images/rivers.jpg"
+        ref.putData(img_data2, metadata: nil) { (metadata, error) in
+            if error != nil {
+                print(error!.localizedDescription)
+                self.isLoading = false
+                return
+            }
+            // Metadata contains file metadata such as size, content-type.
+            // You can also access to download URL after upload.
+            ref.downloadURL { (url, error) in
+                if error != nil {
+                    print(error!.localizedDescription)
+                    self.isLoading = false
+                    return
+                }
+                
+                var databasereference: DatabaseReference!
+                databasereference = Database.database().reference()
+                self.selectedSpace.numOfPhotos += 1
+                databasereference.child("spaces/\(self.selectedSpace.uid)/numOfPhotos").setValue(self.selectedSpace.numOfPhotos)
+                
+                var ref: DatabaseReference!
+                ref = Database.database().reference()
+                ref.child("spaces").observeSingleEvent(of: .value, with: { (snapshot) in
+                    let value = snapshot.value as? NSDictionary
+                    self.currentUsersSpaceL.removeAll()
+                    if (value != nil){
+                        var i = 0
+                        for space in value! {
+                            let temp = space.value as? NSDictionary
+                            let t1 = temp?["u1"] as? String ?? ""
+                            let t2 = temp?["u2"] as? String ?? ""
+                            let t3 = temp?["name"] as? String ?? ""
+                            let t4 = temp?["uid"] as? String ?? ""
+                            let t5 = temp?["numOfPhotos"] as? Int ?? -1
+                            let t6 = temp?["numOfLogs"] as? Int ?? -1
+                            let t7 = temp?["numOfAnniversaries"] as? Int ?? -1
+                            let e = Auth.auth().currentUser?.email
+                            if (e != nil && e != ""){
+                                if (t1 == e || t2 == e){
+                                    let s2 = currentSpace(id:i, u1: t1, u2: t2, name: t3, uid: t4, numOfPhotos: t5, numOfLogs: t6, numOfAnniversaries: t7)
+                                    self.currentUsersSpaceL.append(s2)
+                                    i += 1
+                                }
+                            }
+                        }
+                        for s in self.currentUsersSpaceL{
+                            if s.uid == self.selectedSpace.uid{
+                                let r = Storage.storage().reference().child("spaces/" + self.selectedSpace.uid + "/photo")
+                                
+
+                                r.listAll { (result, error) in
+                                    if let error = error {
+                                        print(error.localizedDescription)
+                                        self.isLoading = false
+                                        return
+                                    }
+                                    var i = 0
+                                    self.images.removeAll()
+                                    for item in result.items{
+                                        item.downloadURL{ url, error in
+                                            if let error = error {
+                                                print(error.localizedDescription)
+                                                self.isLoading = false
+                                                return
+                                            } else {
+                                                let temp = image(id: i, URL: url!.absoluteString, ref: item)
+                                                i += 1
+                                                self.images.append(temp)
+                                                if self.images.count == s.numOfPhotos{
+                                                    self.isLoading = false
+                                                    print("images count = \(self.images.count)")
+                                                    return
+                                                }
+                                            }
+                                        }
+                                    }//end of for item loop
+                                }// end of list all
+                                print("images count = \(self.images.count)")
+                                self.isLoading = false
+                                return
+                            }
+                        }// end of for loop
+                        
+                        
+                    }
+
+                })
+                
+                
+            }
+        }
+        
+    }
     
     func updateDetails(field : String){
         hideKeyboard()
@@ -72,6 +179,43 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
             }
         }
         
+    }
+    func getPhotosURL(){
+        hideKeyboard()
+        isLoading = true
+        let ref = Storage.storage().reference().child("spaces/" + selectedSpace.uid + "/photo")
+        images.removeAll()
+
+        ref.listAll { (result, error) in
+            if let error = error {
+                print(error.localizedDescription)
+                self.isLoading = false
+                return
+            }
+            var i = 0
+            for item in result.items{
+
+                item.downloadURL{ url, error in
+                    if let error = error {
+                        print(error.localizedDescription)
+                        self.isLoading = false
+                        return
+                    } else {
+                        let temp = image(id: i, URL: url!.absoluteString, ref: item)
+                        i += 1
+                        self.images.append(temp)
+                        if self.images.count == self.selectedSpace.numOfPhotos{
+                            self.isLoading = false
+                            print("images count = \(self.images.count)")
+                            return
+                        }
+                    }
+                }
+            }
+        }
+        print("images count = \(self.images.count)")
+        self.isLoading = false
+        return
     }
     func trackUserAndSpaceList(){
         var ref: DatabaseReference!
@@ -148,6 +292,104 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         
         
     }
+    
+    func deletePhoto(ref: StorageReference){
+        
+        alertView(msg: "deletePhoto") { (txt) in
+            
+            if txt == "delete"{
+                self.isLoading = true
+                
+                ref.delete { error in
+                    if let error = error {
+                        print(error.localizedDescription)
+                        self.isLoading = false
+                        return
+                    } else {
+                        var databasereference: DatabaseReference!
+                        databasereference = Database.database().reference()
+                        self.selectedSpace.numOfPhotos -= 1
+                        databasereference.child("spaces/\(self.selectedSpace.uid)/numOfPhotos").setValue(self.selectedSpace.numOfPhotos)
+                        
+                        var ref: DatabaseReference!
+                        ref = Database.database().reference()
+                        ref.child("spaces").observeSingleEvent(of: .value, with: { (snapshot) in
+                            let value = snapshot.value as? NSDictionary
+                            self.currentUsersSpaceL.removeAll()
+                            if (value != nil){
+                                var i = 0
+                                for space in value! {
+                                    let temp = space.value as? NSDictionary
+                                    let t1 = temp?["u1"] as? String ?? ""
+                                    let t2 = temp?["u2"] as? String ?? ""
+                                    let t3 = temp?["name"] as? String ?? ""
+                                    let t4 = temp?["uid"] as? String ?? ""
+                                    let t5 = temp?["numOfPhotos"] as? Int ?? -1
+                                    let t6 = temp?["numOfLogs"] as? Int ?? -1
+                                    let t7 = temp?["numOfAnniversaries"] as? Int ?? -1
+                                    let e = Auth.auth().currentUser?.email
+                                    if (e != nil && e != ""){
+                                        if (t1 == e || t2 == e){
+                                            let s2 = currentSpace(id:i, u1: t1, u2: t2, name: t3, uid: t4, numOfPhotos: t5, numOfLogs: t6, numOfAnniversaries: t7)
+                                            self.currentUsersSpaceL.append(s2)
+                                            i += 1
+                                        }
+                                    }
+                                }
+                                for s in self.currentUsersSpaceL{
+                                    if s.uid == self.selectedSpace.uid{
+                                        let r = Storage.storage().reference().child("spaces/" + self.selectedSpace.uid + "/photo")
+                                        
+
+                                        r.listAll { (result, error) in
+                                            if let error = error {
+                                                print(error.localizedDescription)
+                                                self.isLoading = false
+                                                self.images.removeAll()
+                                                print("images count = \(self.images.count)")
+                                                return
+                                            }
+                                            var i = 0
+                                            self.images.removeAll()
+                                            for item in result.items{
+                                                item.downloadURL{ url, error in
+                                                    if let error = error {
+                                                        print(error.localizedDescription)
+                                                        self.isLoading = false
+                                                        return
+                                                    } else {
+                                                        let temp = image(id: i, URL: url!.absoluteString, ref: item)
+                                                        i += 1
+                                                        self.images.append(temp)
+                                                        if self.images.count == s.numOfPhotos{
+                                                            self.isLoading = false
+                                                            print("images count = \(self.images.count)")
+                                                            return
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                
+                            }
+
+                        })
+                    }
+                }
+            }
+            
+        }
+        
+        
+    }
+    
+    
+    
+    
+    
     func trackSpaceListOnce(){
         var ref: DatabaseReference!
         ref = Database.database().reference()

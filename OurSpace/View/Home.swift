@@ -25,39 +25,71 @@ struct Home: View {
     @State var createEmail = ""
     @State var m:String = "Error"
     @State var show:Bool = false
-    //@State var spacelist:[Space] = [Space]()
     @State var spaceName:String = ""
-    @State var selected: currentSpace = currentSpace(id: -1,u1: "", u2: "", name: "", uid: "", numOfPhotos: 0, numOfLogs: 0, numOfAnniversaries: 0)
     @State var edit = false
-    //@State var userlist:[User] = [User]()
+    @State var selectedSpaceFunc = ""
+    @State var photoEdit = false
     var edges = UIApplication.shared.windows.first?.safeAreaInsets
     
+    
     var body: some View {
-        ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)) {
+            ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)) {
             
-            ZStack{
-                if (selected.uid != ""){
-                    SpaceView(space: $selected)
-                }else{
+                ZStack{
+                    
                     CreateSpaceView(createEmail: $createEmail,m:$m,show:$show,spaceName:$spaceName)
-                        .opacity(selectedTab == "Create" ? 1 : 0)
-                        .alert(isPresented: $show) {
-                            Alert(title: Text(m), message: Text(""), dismissButton: .default(Text("OK")))
+                                            .opacity(selectedTab == "Create" ? 1 : 0)
+                                            .alert(isPresented: $show) {
+                                                Alert(title: Text(m), message: Text(""), dismissButton: .default(Text("OK")))
+                                            }
+                    
+                    if (googleDelegate.selectedSpace.uid == ""){
+                        
+                        DashboardView(edit: $edit).opacity(selectedTab == "Dashboard" ? 1 : 0)
+                        
+                    }else{
+                        
+                        if (selectedSpaceFunc == ""){
+                            
+                            SpaceView(selectedSpaceFunc: $selectedSpaceFunc)
+                                .opacity(selectedTab == "Dashboard" ? 1 : 0)
+                            
                         }
-                    DashboardView(selected: $selected, edit: $edit)
-                        .opacity(selectedTab == "Dashboard" ? 1 : 0)
+                        else if (selectedSpaceFunc == "Photo"){
+                            
+                            PhotoView(selectedSpaceFunc: $selectedSpaceFunc,photoEdit: $photoEdit)
+                                .opacity(selectedTab == "Dashboard" ? 1 : 0)
+                            
+                        }
+                        else if (selectedSpaceFunc == "Log"){
+                            
+                            LogView(selectedSpaceFunc: $selectedSpaceFunc)
+                                .opacity(selectedTab == "Dashboard" ? 1 : 0)
+                            
+                        }
+                        else if (selectedSpaceFunc == "Anniversary"){
+                            
+                            AnniversaryView(selectedSpaceFunc: $selectedSpaceFunc)
+                                .opacity(selectedTab == "Dashboard" ? 1 : 0)
+                            
+                        }
+                        
+                    }
+                    
                     SettingsView(logedin: $logedin,index:$index,loginemail:$loginemail, loginpassword: $loginpassword, passwordVisible: $passwordVisible,signupemail:$signupemail,signuppassword:$signuppassword,signuprepassword:$signuprepassword,signuppasswordVisible: $signuppasswordVisible,signuprepasswordVisible: $signuprepasswordVisible,forgetemail: $forgetemail)
                         .opacity(selectedTab == "Settings" ? 1 : 0)
+                    
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                CustomTabbar(selectedTab: $selectedTab, edit: $edit, selectedSpaceFunc: $selectedSpaceFunc)
+                    .padding(.bottom,edges!.bottom == 0 ? 15 : 0)
+                    .padding(.horizontal,10)
             
-            CustomTabbar(selectedTab: $selectedTab, edit: $edit,space: $selected)
-                .padding(.bottom,edges!.bottom == 0 ? 15 : 0)
-                .padding(.horizontal,10)
         }
         .ignoresSafeArea(.all, edges: .top)
+        
+        
     }
     
     

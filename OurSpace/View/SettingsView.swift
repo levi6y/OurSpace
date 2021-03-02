@@ -66,7 +66,7 @@ struct SettingsView: View {
                     if googleDelegate.isLoading{
                         
                         ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: Color("c2")))
+                            .progressViewStyle(CircularProgressViewStyle(tint: Color.white))
                     }
                 }
                 .padding(.top,25)
@@ -156,28 +156,37 @@ struct SettingsView: View {
         @Binding var forgetemail: String
         var body: some View {
             Button(action: {
-                do {
-                    googleDelegate.isLoading = true
-                    try Auth.auth().signOut()
-                    GIDSignIn.sharedInstance().signOut()
-                    googleDelegate.signedIn = false
-                    logedin = false
-                    UserDefaults.standard.set(logedin,forKey: "logedin")
-                    index = 0
-                    loginemail = ""
-                    loginpassword = ""
-                    passwordVisible = false
-                    signupemail = ""
-                    signuppassword = ""
-                    signuprepassword = ""
-                    signuppasswordVisible = false
-                    signuprepasswordVisible = false
-                    forgetemail = ""
-                } catch let signOutError as NSError {
-                    googleDelegate.isLoading = false
-                    print ("Error signing out: %@", signOutError)
+                hideKeyboard()
+                
+                alertView(msg: "sign out") { (txt) in
+                    
+                    if txt == "sign out"{
+                        do {
+                            googleDelegate.isLoading = true
+                            try Auth.auth().signOut()
+                            GIDSignIn.sharedInstance().signOut()
+                            googleDelegate.signedIn = false
+                            logedin = false
+                            UserDefaults.standard.set(logedin,forKey: "logedin")
+                            index = 0
+                            loginemail = ""
+                            loginpassword = ""
+                            passwordVisible = false
+                            signupemail = ""
+                            signuppassword = ""
+                            signuprepassword = ""
+                            signuppasswordVisible = false
+                            signuprepasswordVisible = false
+                            forgetemail = ""
+                            googleDelegate.isLoading = false
+                        } catch let signOutError as NSError {
+                            googleDelegate.isLoading = false
+                            print ("Error signing out: %@", signOutError)
+                        }
+                        
+                    }
                 }
-                googleDelegate.isLoading = false
+                
             }){
                 Text("Sign Out")
                     .foregroundColor(Color("c3"))

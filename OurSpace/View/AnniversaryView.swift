@@ -1,12 +1,12 @@
 //
-//  SpaceView.swift
+//  AnniversaryView.swift
 //  OurSpace
 //
-//  Created by levi6y on 2021/2/28.
+//  Created by levi6y on 2021/3/2.
 //
 import SwiftUI
 
-struct SpaceView: View {
+struct AnniversaryView: View {
     @EnvironmentObject var googleDelegate: GoogleDelegate
     var edges = UIApplication.shared.windows.first?.safeAreaInsets
     @Binding var selectedSpaceFunc: String
@@ -16,7 +16,7 @@ struct SpaceView: View {
             
             HStack{
                 
-                Text(googleDelegate.selectedSpace.name)
+                Text(googleDelegate.selectedSpace.name + " (Anniversaries)")
                     .font(.largeTitle)
                     .fontWeight(.heavy)
                     .foregroundColor(.white)
@@ -35,18 +35,7 @@ struct SpaceView: View {
                 
                 VStack(spacing: 20){
                     
-                    spaceFunction(txt: "Photo").onTapGesture {
-                        googleDelegate.getPhotosURL()
-                        selectedSpaceFunc = "Photo"
-                    }
                     
-                    spaceFunction(txt: "Log").onTapGesture {
-                        selectedSpaceFunc = "Log"
-                    }
-                    
-                    spaceFunction(txt: "Anniversary").onTapGesture {
-                        selectedSpaceFunc = "Anniversary"
-                    }
                     
                 }.padding()
                 
@@ -58,15 +47,13 @@ struct SpaceView: View {
             backButton(selectedSpaceFunc: $selectedSpaceFunc).padding(.bottom,100)
         }
     }
-    
     struct backButton: View {
         @EnvironmentObject var googleDelegate: GoogleDelegate
         @Binding var selectedSpaceFunc: String
-        
+
         var body: some View {
             Button(action: {
                 selectedSpaceFunc = ""
-                googleDelegate.selectedSpace = currentSpace(id: -1,u1: "", u2: "", name: "", uid: "", numOfPhotos: 0, numOfLogs: 0, numOfAnniversaries: 0)
                 
             }){
                 Text("Back")
@@ -78,35 +65,5 @@ struct SpaceView: View {
             .clipShape(Capsule())
             .shadow(radius: 5)
         }
-    }
-}
-
-
-
-struct spaceFunction : View{
-
-
-    var txt: String
-    @EnvironmentObject var googleDelegate: GoogleDelegate
-    var body: some View{
-        
-        HStack{
-            Spacer()
-            VStack(alignment: .leading, spacing: 5){
-                Text(txt)
-                    .foregroundColor(Color("c3"))
-                    .fontWeight(.bold)
-            }
-            
-            
-            Spacer()
-            
-            
-            
-        }
-        .padding()
-        .background(RoundedRectangle(cornerRadius: 8).fill(Color.white))
-        .animation(.spring())
-        
     }
 }

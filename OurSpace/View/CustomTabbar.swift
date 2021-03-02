@@ -9,15 +9,15 @@ import SwiftUI
 struct CustomTabbar: View {
     @Binding var selectedTab : String
     @Binding var edit: Bool
-    @Binding var space: currentSpace
+    @Binding var selectedSpaceFunc: String
     var body: some View {
         
         HStack(spacing: 65){
             
-            TabButton(title: "Create", selectedTab: $selectedTab,edit:$edit,space: $space)
-            
-            TabButton(title: "Dashboard", selectedTab: $selectedTab,edit:$edit,space: $space)
-            TabButton(title: "Settings", selectedTab: $selectedTab,edit:$edit,space: $space)
+            TabButton(title: "Create", selectedTab: $selectedTab,edit:$edit, selectedSpaceFunc: $selectedSpaceFunc)
+             
+            TabButton(title: "Dashboard", selectedTab: $selectedTab,edit:$edit, selectedSpaceFunc: $selectedSpaceFunc)
+            TabButton(title: "Settings", selectedTab: $selectedTab,edit:$edit, selectedSpaceFunc: $selectedSpaceFunc)
         }
         .padding(.horizontal)
         .background(Color.white)
@@ -33,12 +33,12 @@ struct TabButton : View {
     @Binding var selectedTab : String
     @EnvironmentObject var googleDelegate: GoogleDelegate
     @Binding var edit: Bool
-    @Binding var space: currentSpace
+    @Binding var selectedSpaceFunc: String
     var body: some View{
         
         Button(action: {
             selectedTab = title
-            space = currentSpace(id: -1,u1: "", u2: "", name: "", uid: "", numOfPhotos: 0, numOfLogs: 0, numOfAnniversaries: 0)
+            
             if title == "Create"{
                 googleDelegate.trackUserListOnce()
                 googleDelegate.trackSpaceListOnce()

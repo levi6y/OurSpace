@@ -17,3 +17,7 @@
 28 Feb
 1. implement UI for displaying and deleting spaces.
 2. implement UI for selected space.
+
+2 March
+1. implement UI for photo function.
+2. implement delet and upload for photo function.

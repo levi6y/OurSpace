@@ -10,7 +10,6 @@ import SwiftUI
 struct DashboardView: View {
     @EnvironmentObject var googleDelegate: GoogleDelegate
     var edges = UIApplication.shared.windows.first?.safeAreaInsets
-    @Binding var selected: currentSpace
     @Binding var edit: Bool
 
     
@@ -46,7 +45,7 @@ struct DashboardView: View {
                     ForEach(self.googleDelegate.currentUsersSpaceL){ i in
                         
                         cellView(edit: edit, data: i).onTapGesture {
-                            selected = i
+                            googleDelegate.selectedSpace = i
                         }
                     }
                     
