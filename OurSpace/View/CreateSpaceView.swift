@@ -37,34 +37,38 @@ struct CreateSpaceView: View {
         ref.child(uid).child("numOfAnniversaries").setValue(0)
  */
         m = "Space Created!"
-        googleDelegate.isLoading = false
+        withAnimation(.spring()){
+            googleDelegate.isLoading = false
+        }
         show = true
         return
     }
 
     func validateForm(){
         var result = false
-        googleDelegate.isLoading = true
+        withAnimation(.spring()){
+            googleDelegate.isLoading = true
+        }
+
         googleDelegate.userL.removeAll()
         googleDelegate.spaceL.removeAll()
-        print("userL: " + String(googleDelegate.userL.count) + " spaceL: " + String(googleDelegate.spaceL.count))
+        //print("userL: " + String(googleDelegate.userL.count) + " spaceL: " + String(googleDelegate.spaceL.count))
         _ = googleDelegate.trackSpaceListOnce2()
             .then { _ -> Promise<Bool> in
                 return googleDelegate.trackUserListOnce2()
             }.done { _ in
-                print("userL: " + String(googleDelegate.userL.count) + " spaceL: " + String(googleDelegate.spaceL.count))
+                //print("userL: " + String(googleDelegate.userL.count) + " spaceL: " + String(googleDelegate.spaceL.count))
                 result = v()
-                print("result: \(result)")
+                //print("result: \(result)")
                 if (result){
                     createSpace()
                 }
-                googleDelegate.isLoading = false
             }
         
     }
 
     func v() -> Bool{
-        print("in v()")
+        
         let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
         let emailTest:NSPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
         let currentUserEmail = Auth.auth().currentUser?.email
