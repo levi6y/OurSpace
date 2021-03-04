@@ -73,8 +73,11 @@ struct SpaceView: View {
         
         var body: some View {
             Button(action: {
-                selectedSpaceFunc = ""
-                googleDelegate.selectedSpace = currentSpace(id: -1,u1: "", u2: "", name: "", uid: "", numOfPhotos: 0, numOfLogs: 0, numOfAnniversaries: 0)
+                withAnimation(.spring()){
+                    selectedSpaceFunc = ""
+                    googleDelegate.selectedSpace = currentSpace(id: -1,u1: "", u2: "", name: "", uid: "", numOfPhotos: 0, numOfLogs: 0, numOfAnniversaries: 0)
+                }
+                
                 
             }){
                 Text("Back")
