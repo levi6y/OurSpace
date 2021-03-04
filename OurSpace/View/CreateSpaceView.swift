@@ -62,6 +62,10 @@ struct CreateSpaceView: View {
                 //print("result: \(result)")
                 if (result){
                     createSpace()
+                }else{
+                    withAnimation(.spring()){
+                        googleDelegate.isLoading = false
+                    }
                 }
             }
         
