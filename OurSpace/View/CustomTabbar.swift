@@ -40,12 +40,11 @@ struct TabButton : View {
             selectedTab = title
             
             if title == "Create"{
-                googleDelegate.trackUserListOnce()
-                googleDelegate.trackSpaceListOnce()
+                //googleDelegate.trackUserListOnce()
+                //googleDelegate.trackSpaceListOnce()
+                
                 edit = false
                 
-            }else if title == "Dashboard"{
-                googleDelegate.trackSpaceListOnce()
             }else if title == "Settings"{
                 edit = false
             }

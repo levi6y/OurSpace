@@ -9,7 +9,7 @@ import SwiftUI
 import Firebase
 import GoogleSignIn
 import Dispatch
-
+import PromiseKit
 struct CreateSpaceView: View {
     @EnvironmentObject var googleDelegate: GoogleDelegate
     var edges = UIApplication.shared.windows.first?.safeAreaInsets
@@ -42,14 +42,29 @@ struct CreateSpaceView: View {
         return
     }
 
-    func validateForm() -> Bool{
-        googleDelegate.trackSpaceListOnce()
-        googleDelegate.trackUserListOnce()
-        let result = v()
-        return result
+    func validateForm(){
+        var result = false
+        googleDelegate.isLoading = true
+        googleDelegate.userL.removeAll()
+        googleDelegate.spaceL.removeAll()
+        print("userL: " + String(googleDelegate.userL.count) + " spaceL: " + String(googleDelegate.spaceL.count))
+        _ = googleDelegate.trackSpaceListOnce2()
+            .then { _ -> Promise<Bool> in
+                return googleDelegate.trackUserListOnce2()
+            }.done { _ in
+                print("userL: " + String(googleDelegate.userL.count) + " spaceL: " + String(googleDelegate.spaceL.count))
+                result = v()
+                print("result: \(result)")
+                if (result){
+                    createSpace()
+                }
+                googleDelegate.isLoading = false
+            }
+        
     }
 
     func v() -> Bool{
+        print("in v()")
         let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
         let emailTest:NSPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
         let currentUserEmail = Auth.auth().currentUser?.email
@@ -163,14 +178,9 @@ struct CreateSpaceView: View {
                 
                 Button(action:{
                     hideKeyboard()
-                    googleDelegate.isLoading = true
                     
                     
-                    if !validateForm(){
-                        googleDelegate.isLoading = false
-                        return
-                    }
-                    createSpace()
+                    validateForm()
                     
                 }){
                     Text("CREATE")

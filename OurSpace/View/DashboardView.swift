@@ -26,12 +26,30 @@ struct DashboardView: View {
                 Spacer(minLength: 0)
                 Button(action: {
                     
+                    _ = googleDelegate.trackSpaceListOnce2()
+                        .done{_ in
+                            edit = false
+                            
+                        }
+                    
+                }) {
+                    
+                    Image(systemName: "arrow.clockwise.circle.fill")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(.white)
+                }.padding(.trailing,10)
+                Button(action: {
+                    
                     self.edit.toggle()
                     
                 }) {
                     
-                    Text(self.edit ? "Done" : "Edit").foregroundColor(.white)
-                }
+                    Image(systemName: "pencil.circle.fill")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(.white)
+                }.padding(.trailing ,10)
             }
             .padding()
             .padding(.top,edges!.top)

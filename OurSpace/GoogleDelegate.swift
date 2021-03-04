@@ -9,7 +9,7 @@ import Foundation
 import Firebase
 import GoogleSignIn
 import SwiftUI
-
+import PromiseKit
 class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
     @Published var signedIn: Bool = false
     @Published var emailVerified: Bool = false
@@ -506,10 +506,82 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                 }
             }
             self.updatingUserList = false
+            
         })
+    }
+    func trackUserListOnce2() -> Promise<Bool>{
+        let p = Promise<Bool> { resolver in
+            updatingUserList = true
+            var ref: DatabaseReference!
+            ref = Database.database().reference()
+            ref.child("users").observeSingleEvent(of: .value, with: { (snapshot) in
+                let value = snapshot.value as? NSDictionary
+                self.userL.removeAll()
+                if (value != nil){
+                    for user in value! {
+                        let temp = user.value as? NSDictionary
+                        let username = temp?["userName"] as? String ?? "No Username"
+                        let uid = temp?["uid"] as? String ?? ""
+                        let email = temp?["email"] as? String ?? ""
+                        let pic = temp?["pic"] as? String ?? "0"
+                        let u = User(email: email, userName: username, uid: uid, pic: pic)
+                        self.userL.append(u)
+                        
+                    }
+                }
+                self.updatingUserList = false
+                print("trackUserListOnce2()")
+                resolver.fulfill(true)
+            })
+        }
+        return p
+    }
+    func trackSpaceListOnce2()-> Promise<Bool>{
+        let p = Promise<Bool> { resolver in
+            updatingSpaceList = true
+            var ref: DatabaseReference!
+            ref = Database.database().reference()
+            ref.child("spaces").observeSingleEvent(of: .value, with: { (snapshot) in
+                let value = snapshot.value as? NSDictionary
+                self.spaceL.removeAll()
+                self.currentUsersSpaceL.removeAll()
+                if (value != nil){
+                    var i = 0
+                    for space in value! {
+                        let temp = space.value as? NSDictionary
+                        let t1 = temp?["u1"] as? String ?? ""
+                        let t2 = temp?["u2"] as? String ?? ""
+                        let t3 = temp?["name"] as? String ?? ""
+                        let t4 = temp?["uid"] as? String ?? ""
+                        let t5 = temp?["numOfPhotos"] as? Int ?? -1
+                        let t6 = temp?["numOfLogs"] as? Int ?? -1
+                        let t7 = temp?["numOfAnniversaries"] as? Int ?? -1
+                        let s = Space(u1: t1, u2: t2, name: t3, uid: t4, numOfPhotos: t5, numOfLogs: t6, numOfAnniversaries: t7)
+                        
+                        let e = Auth.auth().currentUser?.email
+                        if (e != nil && e != ""){
+                            if (t1 == e || t2 == e){
+                                let s2 = currentSpace(id:i, u1: t1, u2: t2, name: t3, uid: t4, numOfPhotos: t5, numOfLogs: t6, numOfAnniversaries: t7)
+                                self.currentUsersSpaceL.append(s2)
+                                
+                                i += 1
+                            }
+                        }
+                        
+                        self.spaceL.append(s)
+                    }
+                }
+                self.updatingSpaceList = false
+                
+                resolver.fulfill(true)
+                print("trackSpaceListOnce2()")
+            })
+        }
+        return p
+        
+        
         
     }
-    
     func updateUsername(id: String,value: String){
         
         let currentUser = Auth.auth().currentUser!
@@ -534,9 +606,11 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                         self.user = user
                     }
                     
-                    trackUserListOnce()
-                    trackSpaceListOnce()
-                    self.isLoading = false
+                    _ = trackSpaceListOnce2()
+                        .done{_ in
+                            self.isLoading = false
+                            
+                        }
                 }else{
                     self.isLoading = false
                     print("No user logged in.")
@@ -569,10 +643,13 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                 databasereference.child("users/\(currentUser.uid)/email").setValue(currentUser.email!)
                 fetchUser(uid: currentUser.uid) { (user) in
                     self.user = user
-                    self.trackUserListOnce()
+                    //self.trackUserListOnce()
                     self.signedIn = true
-                    self.trackSpaceListOnce()
-                    self.isLoading = false
+                    _ = self.trackSpaceListOnce2()
+                        .done{_ in
+                            self.isLoading = false
+                            
+                        }
                 }
                 
             }

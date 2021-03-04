@@ -59,7 +59,7 @@ struct SettingsView: View {
                         .resizable()
                         .scaledToFit()
                         .aspectRatio(contentMode: .fill)
-                        .frame(width: 150, height: 150,alignment: .center)
+                        .frame(width: 200, height: 200,alignment: .center)
                         .clipShape(Circle())
                         
             

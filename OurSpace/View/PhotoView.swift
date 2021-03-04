@@ -33,8 +33,11 @@ struct PhotoView: View {
                     
                 }) {
                     
-                    Text(photoEdit ? "Done" : "Edit").foregroundColor(.white)
-                }
+                    Image(systemName: "pencil.circle.fill")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(.white)
+                }.padding(.trailing ,10)
             }
             .padding()
             .padding(.top,edges!.top)

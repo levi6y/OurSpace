@@ -11,7 +11,7 @@ pod 'FirebaseUI/Auth'
 pod 'GoogleSignIn'
 pod 'FirebaseUI/Google'
 pod 'SDWebImageSwiftUI'
-
+pod "PromiseKit", "~> 6.8"
 
   # Pods for OurSpace
 
