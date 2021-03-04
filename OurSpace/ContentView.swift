@@ -25,7 +25,9 @@ struct ContentView: View {
     @State var alertMessage = "Something is wrong."
     @State var showingAlert = false
     @State var forgetemail = ""
-
+    init(){
+        UIScrollView.appearance().bounces = false
+    }
     
     var body: some View {
         
@@ -82,7 +84,7 @@ struct ContentView: View {
                     }.padding()
                     
                 }
-                if googleDelegate.isLoading {
+                if googleDelegate.isLoading || googleDelegate.updatingUserList || googleDelegate.updatingSpaceList {
                     
                     GeometryReader{_ in
                         

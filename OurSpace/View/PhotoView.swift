@@ -9,11 +9,12 @@ import Firebase
 import GoogleSignIn
 import SDWebImageSwiftUI
 struct PhotoView: View {
+    
     @EnvironmentObject var googleDelegate: GoogleDelegate
     var edges = UIApplication.shared.windows.first?.safeAreaInsets
-
     @Binding var selectedSpaceFunc: String
     @Binding var photoEdit: Bool
+    
     var body: some View {
         
         VStack{
@@ -49,7 +50,7 @@ struct PhotoView: View {
                     if (!googleDelegate.isLoading && googleDelegate.images.count > 0){
                         ForEach(self.googleDelegate.images){ i in
                             
-                            ImageView(image: i,photoEdit: $photoEdit)
+                            ImageView(image: i,photoEdit: $photoEdit, image2: UIImage())
                             
                             
                         }
@@ -70,7 +71,18 @@ struct PhotoView: View {
                 
             }.padding(.bottom,100)
             
-        }.sheet(isPresented: $googleDelegate.picker2) {
+        }.overlay(
+            ZStack{
+                if googleDelegate.showingViewer && !googleDelegate.isLoading{
+                    
+                    Color.black
+                        .opacity(googleDelegate.bgOpacity)
+                        .ignoresSafeArea()
+                    
+                    ImageDetailView()
+                }
+            }
+        ).sheet(isPresented: $googleDelegate.picker2) {
             
             ImagePicker(picker: $googleDelegate.picker2, img_Data: $googleDelegate.img_data2)
         }
@@ -80,6 +92,8 @@ struct PhotoView: View {
             
         }
     }
+    
+    
     struct backButton: View {
         @EnvironmentObject var googleDelegate: GoogleDelegate
         @Binding var selectedSpaceFunc: String

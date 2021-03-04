@@ -8,7 +8,7 @@
 import Foundation
 import Firebase
 import GoogleSignIn
-
+import SwiftUI
 
 class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
     @Published var signedIn: Bool = false
@@ -21,14 +21,61 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
     @Published var img_data = Data(count: 0)
     @Published var img_data2 = Data(count: 0)
     
-    // Loading View..
-    @Published var isLoading = true
+    @Published var isLoading = false
+    @Published var updatingUserList = false
+    @Published var updatingSpaceList = false
     @Published var spaceL:[Space] = [Space]()
     @Published var currentUsersSpaceL:[currentSpace] = [currentSpace]()
     @Published var userL:[User] = [User]()
     @Published var images:[image] = []
+    @Published var imagesURL:[String] = []
     @Published var selectedSpace: currentSpace = currentSpace(id: -1,u1: "", u2: "", name: "", uid: "", numOfPhotos: 0, numOfLogs: 0, numOfAnniversaries: 0)
+
+    // for viewing photo's details
+    @Published var selectedImages: [String] = []
+    @Published var selectedImageID = ""
+    @Published var imageViewerOffset: CGSize = .zero
+    @Published var bgOpacity: Double = 1
+    @Published var showingViewer = false
+    @Published var showTabbar = true
     
+    @Published var imageScale: CGFloat = 1
+    
+    func onChange(value: CGSize){
+        imageViewerOffset = value
+        
+        
+        //calculating opacity
+        
+        let h = UIScreen.main.bounds.height / 2
+        
+        let progress = imageViewerOffset.height / h
+        
+        withAnimation(.default){
+            bgOpacity = Double(1 - (progress < 0 ? -progress : progress))
+        }
+        
+    }
+    
+    func onEnd(value: DragGesture.Value){
+        withAnimation(.easeInOut){
+            var t = value.translation.height
+            if t<0{
+                t = -t
+            }
+            
+            if t<180{
+                imageViewerOffset = .zero
+                bgOpacity = 1
+            }else{
+                showingViewer = false
+                showTabbar = true
+                imageViewerOffset = .zero
+                bgOpacity = 1
+            }
+        }
+        
+    }
     func updateImage(){
         
         isLoading = true
@@ -133,6 +180,7 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                                     }
                                     var i = 0
                                     self.images.removeAll()
+                                    self.imagesURL.removeAll()
                                     for item in result.items{
                                         item.downloadURL{ url, error in
                                             if let error = error {
@@ -143,6 +191,7 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                                                 let temp = image(id: i, URL: url!.absoluteString, ref: item)
                                                 i += 1
                                                 self.images.append(temp)
+                                                self.imagesURL.append(url!.absoluteString)
                                                 if self.images.count == s.numOfPhotos{
                                                     self.isLoading = false
                                                     print("images count = \(self.images.count)")
@@ -185,6 +234,7 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         isLoading = true
         let ref = Storage.storage().reference().child("spaces/" + selectedSpace.uid + "/photo")
         images.removeAll()
+        imagesURL.removeAll()
 
         ref.listAll { (result, error) in
             if let error = error {
@@ -204,6 +254,7 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                         let temp = image(id: i, URL: url!.absoluteString, ref: item)
                         i += 1
                         self.images.append(temp)
+                        self.imagesURL.append(url!.absoluteString)
                         if self.images.count == self.selectedSpace.numOfPhotos{
                             self.isLoading = false
                             print("images count = \(self.images.count)")
@@ -212,6 +263,7 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                     }
                 }
             }
+            
         }
         print("images count = \(self.images.count)")
         self.isLoading = false
@@ -346,11 +398,13 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                                                 print(error.localizedDescription)
                                                 self.isLoading = false
                                                 self.images.removeAll()
+                                                self.imagesURL.removeAll()
                                                 print("images count = \(self.images.count)")
                                                 return
                                             }
                                             var i = 0
                                             self.images.removeAll()
+                                            self.imagesURL.removeAll()
                                             for item in result.items{
                                                 item.downloadURL{ url, error in
                                                     if let error = error {
@@ -361,6 +415,7 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                                                         let temp = image(id: i, URL: url!.absoluteString, ref: item)
                                                         i += 1
                                                         self.images.append(temp)
+                                                        self.imagesURL.append(url!.absoluteString)
                                                         if self.images.count == s.numOfPhotos{
                                                             self.isLoading = false
                                                             print("images count = \(self.images.count)")
@@ -391,6 +446,7 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
     
     
     func trackSpaceListOnce(){
+        updatingSpaceList = true
         var ref: DatabaseReference!
         ref = Database.database().reference()
         ref.child("spaces").observeSingleEvent(of: .value, with: { (snapshot) in
@@ -423,12 +479,15 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                     self.spaceL.append(s)
                 }
             }
-            self.isLoading = false
+            self.updatingSpaceList = false
+            
+            
         })
         
         
     }
     func trackUserListOnce(){
+        updatingUserList = true
         var ref: DatabaseReference!
         ref = Database.database().reference()
         ref.child("users").observeSingleEvent(of: .value, with: { (snapshot) in
@@ -445,8 +504,8 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                     self.userL.append(u)
                     
                 }
-                print("user list updated")
             }
+            self.updatingUserList = false
         })
         
     }
@@ -477,7 +536,7 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                     
                     trackUserListOnce()
                     trackSpaceListOnce()
-                    
+                    self.isLoading = false
                 }else{
                     self.isLoading = false
                     print("No user logged in.")
@@ -513,6 +572,7 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                     self.trackUserListOnce()
                     self.signedIn = true
                     self.trackSpaceListOnce()
+                    self.isLoading = false
                 }
                 
             }

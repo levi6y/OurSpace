@@ -10,21 +10,31 @@ import SDWebImageSwiftUI
 struct ImageView: View {
     @EnvironmentObject var googledelegate: GoogleDelegate
     var image: image
+    
     @Binding var photoEdit: Bool
+    @State var image2: UIImage
     var body: some View{
         HStack{
-            ZStack{
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: Color.white))
-                WebImage(url: URL(string: image.URL)!)
-                    .resizable()
-                    .scaledToFit()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: photoEdit ? (getRect().width - 100) : (getRect().width - 50) , height: photoEdit ? (getRect().width - 100)*0.9 : (getRect().width - 50)*0.9)
-                    .cornerRadius(12)
+            Button(action: {
+                withAnimation(.easeInOut){
+                    googledelegate.selectedImageID = image.URL
+                    googledelegate.showingViewer = true
+                    googledelegate.showTabbar = false
+                }
+            }, label: {
+                ZStack{
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: Color.white))
+                    WebImage(url: URL(string: image.URL)!)
+                        .resizable()
+                        .scaledToFit()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: photoEdit ? (getRect().width - 100) : (getRect().width - 50) , height: photoEdit ? (getRect().width - 100)*0.9 : (getRect().width - 50)*0.9)
+                        .cornerRadius(12)
+                        
                     
-                
-            }
+                }
+            })
             if photoEdit{
                 Button(action: {
                     googledelegate.deletePhoto(ref: image.ref)

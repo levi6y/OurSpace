@@ -81,10 +81,12 @@ struct Home: View {
                     
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                if googleDelegate.showTabbar {
+                    CustomTabbar(selectedTab: $selectedTab, edit: $edit, selectedSpaceFunc: $selectedSpaceFunc)
+                        .padding(.bottom,edges!.bottom == 0 ? 15 : 0)
+                        .padding(.horizontal,10)
+                }
                 
-                CustomTabbar(selectedTab: $selectedTab, edit: $edit, selectedSpaceFunc: $selectedSpaceFunc)
-                    .padding(.bottom,edges!.bottom == 0 ? 15 : 0)
-                    .padding(.horizontal,10)
             
         }
         .ignoresSafeArea(.all, edges: .top)
