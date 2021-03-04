@@ -36,16 +36,24 @@ struct SpaceView: View {
                 VStack(spacing: 20){
                     
                     spaceFunction(txt: "Photo").onTapGesture {
+                        withAnimation(.spring()){
+                            selectedSpaceFunc = "Photo"
+                        }
+                        
                         googleDelegate.getPhotosURL()
-                        selectedSpaceFunc = "Photo"
+                        
                     }
                     
                     spaceFunction(txt: "Log").onTapGesture {
-                        selectedSpaceFunc = "Log"
+                        withAnimation(.spring()){
+                            selectedSpaceFunc = "Log"
+                        }
                     }
                     
                     spaceFunction(txt: "Anniversary").onTapGesture {
-                        selectedSpaceFunc = "Anniversary"
+                        withAnimation(.spring()){
+                            selectedSpaceFunc = "Anniversary"
+                        }
                     }
                     
                 }.padding()

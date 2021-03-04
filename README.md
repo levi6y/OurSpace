@@ -24,3 +24,6 @@
 
 4 March
 1. implement image viewer for photo function. (Photo function finished)
+
+5 March
+1. add animation to UI

@@ -63,7 +63,10 @@ struct DashboardView: View {
                     ForEach(self.googleDelegate.currentUsersSpaceL){ i in
                         
                         cellView(edit: edit, data: i).onTapGesture {
-                            googleDelegate.selectedSpace = i
+                            withAnimation(.spring()){
+                                googleDelegate.selectedSpace = i
+                            }
+                            
                         }
                     }
                     

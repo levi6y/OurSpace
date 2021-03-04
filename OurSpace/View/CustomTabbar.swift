@@ -37,7 +37,10 @@ struct TabButton : View {
     var body: some View{
         
         Button(action: {
-            selectedTab = title
+            withAnimation(.spring()){
+                selectedTab = title
+            }
+            
             
             if title == "Create"{
                 //googleDelegate.trackUserListOnce()

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5A1348A025B880E30067BD3D /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A13489F25B880E30067BD3D /* User.swift */; };
+		5A41173625F1A3F5001403D6 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 5A41173525F1A3F5001403D6 /* README.md */; };
 		5A5086492592F9440081FB5F /* GoogleDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A5086482592F9440081FB5F /* GoogleDelegate.swift */; };
 		5A536F7C2592F1EF00AC16BA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A536F7B2592F1EF00AC16BA /* AppDelegate.swift */; };
 		5A536F7E2592F1EF00AC16BA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A536F7D2592F1EF00AC16BA /* SceneDelegate.swift */; };
@@ -43,6 +44,7 @@
 		301C63407DF02EECD573220B /* Pods-OurSpace.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OurSpace.debug.xcconfig"; path = "Target Support Files/Pods-OurSpace/Pods-OurSpace.debug.xcconfig"; sourceTree = "<group>"; };
 		5602417606D9B4439EC86C08 /* Pods-OurSpace.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OurSpace.release.xcconfig"; path = "Target Support Files/Pods-OurSpace/Pods-OurSpace.release.xcconfig"; sourceTree = "<group>"; };
 		5A13489F25B880E30067BD3D /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		5A41173525F1A3F5001403D6 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		5A5086482592F9440081FB5F /* GoogleDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleDelegate.swift; sourceTree = "<group>"; };
 		5A536F782592F1EF00AC16BA /* OurSpace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OurSpace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A536F7B2592F1EF00AC16BA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -134,6 +136,7 @@
 				5A536F902592F2E700AC16BA /* GoogleService-Info.plist */,
 				5A536F832592F1F000AC16BA /* Preview Content */,
 				5A5086482592F9440081FB5F /* GoogleDelegate.swift */,
+				5A41173525F1A3F5001403D6 /* README.md */,
 			);
 			path = OurSpace;
 			sourceTree = "<group>";
@@ -246,6 +249,7 @@
 			files = (
 				5A536F882592F1F000AC16BA /* LaunchScreen.storyboard in Resources */,
 				5A536F912592F2E700AC16BA /* GoogleService-Info.plist in Resources */,
+				5A41173625F1A3F5001403D6 /* README.md in Resources */,
 				5A536F852592F1F000AC16BA /* Preview Assets.xcassets in Resources */,
 				5A536F822592F1F000AC16BA /* Assets.xcassets in Resources */,
 			);

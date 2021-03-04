@@ -77,8 +77,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         
     }
     func updateImage(){
-        
-        isLoading = true
+        withAnimation(.spring()){
+            isLoading = true
+        }
         // File located on disk
         
         // Create a reference to the file you want to upload
@@ -87,6 +88,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         // Upload the file to the path "images/rivers.jpg"
         ref.putData(img_data, metadata: nil) { (metadata, error) in
             if error != nil {
+                withAnimation(.spring()){
+                    self.isLoading = false
+                }
                 print(error!.localizedDescription)
                 return
             }
@@ -95,7 +99,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
             ref.downloadURL { (url, error) in
                 if error != nil {
                     print(error!.localizedDescription)
-                    self.isLoading = false
+                    withAnimation(.spring()){
+                        self.isLoading = false
+                    }
                     return
                 }
                 
@@ -106,14 +112,18 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                 fetchUser(uid: currentUser.uid) { (user) in
                     self.user = user
                 }
-                self.isLoading = false
+                withAnimation(.spring()){
+                    self.isLoading = false
+                }
             }
         }
         
     }
     func uploadPhoto(){
         
-        isLoading = true
+        withAnimation(.spring()){
+            self.isLoading = true
+        }
         // File located on disk
         
         // Create a reference to the file you want to upload
@@ -125,7 +135,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         ref.putData(img_data2, metadata: nil) { (metadata, error) in
             if error != nil {
                 print(error!.localizedDescription)
-                self.isLoading = false
+                withAnimation(.spring()){
+                    self.isLoading = false
+                }
                 return
             }
             // Metadata contains file metadata such as size, content-type.
@@ -133,7 +145,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
             ref.downloadURL { (url, error) in
                 if error != nil {
                     print(error!.localizedDescription)
-                    self.isLoading = false
+                    withAnimation(.spring()){
+                        self.isLoading = false
+                    }
                     return
                 }
                 
@@ -175,7 +189,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                                 r.listAll { (result, error) in
                                     if let error = error {
                                         print(error.localizedDescription)
-                                        self.isLoading = false
+                                        withAnimation(.spring()){
+                                            self.isLoading = false
+                                        }
                                         return
                                     }
                                     var i = 0
@@ -185,7 +201,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                                         item.downloadURL{ url, error in
                                             if let error = error {
                                                 print(error.localizedDescription)
-                                                self.isLoading = false
+                                                withAnimation(.spring()){
+                                                    self.isLoading = false
+                                                }
                                                 return
                                             } else {
                                                 let temp = image(id: i, URL: url!.absoluteString, ref: item)
@@ -193,7 +211,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                                                 self.images.append(temp)
                                                 self.imagesURL.append(url!.absoluteString)
                                                 if self.images.count == s.numOfPhotos{
-                                                    self.isLoading = false
+                                                    withAnimation(.spring()){
+                                                        self.isLoading = false
+                                                    }
                                                     print("images count = \(self.images.count)")
                                                     return
                                                 }
@@ -202,7 +222,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                                     }//end of for item loop
                                 }// end of list all
                                 print("images count = \(self.images.count)")
-                                self.isLoading = false
+                                withAnimation(.spring()){
+                                    self.isLoading = false
+                                }
                                 return
                             }
                         }// end of for loop
@@ -223,7 +245,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         alertView(msg: "username") { (txt) in
             
             if txt != ""{
-                self.isLoading = true
+                withAnimation(.spring()){
+                    self.isLoading = true
+                }
                 self.updateUsername(id: "userName", value: txt)
             }
         }
@@ -231,7 +255,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
     }
     func getPhotosURL(){
         hideKeyboard()
-        isLoading = true
+        withAnimation(.spring()){
+            self.isLoading = true
+        }
         let ref = Storage.storage().reference().child("spaces/" + selectedSpace.uid + "/photo")
         images.removeAll()
         imagesURL.removeAll()
@@ -239,7 +265,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         ref.listAll { (result, error) in
             if let error = error {
                 print(error.localizedDescription)
-                self.isLoading = false
+                withAnimation(.spring()){
+                    self.isLoading = false
+                }
                 return
             }
             var i = 0
@@ -248,7 +276,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                 item.downloadURL{ url, error in
                     if let error = error {
                         print(error.localizedDescription)
-                        self.isLoading = false
+                        withAnimation(.spring()){
+                            self.isLoading = false
+                        }
                         return
                     } else {
                         let temp = image(id: i, URL: url!.absoluteString, ref: item)
@@ -256,7 +286,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                         self.images.append(temp)
                         self.imagesURL.append(url!.absoluteString)
                         if self.images.count == self.selectedSpace.numOfPhotos{
-                            self.isLoading = false
+                            withAnimation(.spring()){
+                                self.isLoading = false
+                            }
                             print("images count = \(self.images.count)")
                             return
                         }
@@ -266,7 +298,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
             
         }
         print("images count = \(self.images.count)")
-        self.isLoading = false
+        withAnimation(.spring()){
+            self.isLoading = false
+        }
         return
     }
     func trackUserAndSpaceList(){
@@ -324,10 +358,12 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
     }
     func deleteSpace(uid: String){
         
-        isLoading = true
+        
         
         alertView(msg: "delete") { (txt) in
-            
+            withAnimation(.spring()){
+                self.isLoading = true
+            }
             if txt == "delete"{
                 let ref = Database.database().reference().child("spaces")
                 ref.child(uid).removeValue()
@@ -335,7 +371,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                 self.trackSpaceListOnce()
                 
             }
-            self.isLoading = false
+            withAnimation(.spring()){
+                self.isLoading = false
+            }
         }
         
         
@@ -350,12 +388,16 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         alertView(msg: "deletePhoto") { (txt) in
             
             if txt == "delete"{
-                self.isLoading = true
+                withAnimation(.spring()){
+                    self.isLoading = true
+                }
                 
                 ref.delete { error in
                     if let error = error {
                         print(error.localizedDescription)
-                        self.isLoading = false
+                        withAnimation(.spring()){
+                            self.isLoading = false
+                        }
                         return
                     } else {
                         var databasereference: DatabaseReference!
@@ -396,7 +438,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                                         r.listAll { (result, error) in
                                             if let error = error {
                                                 print(error.localizedDescription)
-                                                self.isLoading = false
+                                                withAnimation(.spring()){
+                                                    self.isLoading = false
+                                                }
                                                 self.images.removeAll()
                                                 self.imagesURL.removeAll()
                                                 print("images count = \(self.images.count)")
@@ -409,7 +453,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                                                 item.downloadURL{ url, error in
                                                     if let error = error {
                                                         print(error.localizedDescription)
-                                                        self.isLoading = false
+                                                        withAnimation(.spring()){
+                                                            self.isLoading = false
+                                                        }
                                                         return
                                                     } else {
                                                         let temp = image(id: i, URL: url!.absoluteString, ref: item)
@@ -417,7 +463,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                                                         self.images.append(temp)
                                                         self.imagesURL.append(url!.absoluteString)
                                                         if self.images.count == s.numOfPhotos{
-                                                            self.isLoading = false
+                                                            withAnimation(.spring()){
+                                                                self.isLoading = false
+                                                            }
                                                             print("images count = \(self.images.count)")
                                                             return
                                                         }
@@ -446,7 +494,10 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
     
     
     func trackSpaceListOnce(){
-        updatingSpaceList = true
+        withAnimation(.spring()){
+            updatingSpaceList = true
+        }
+        
         var ref: DatabaseReference!
         ref = Database.database().reference()
         ref.child("spaces").observeSingleEvent(of: .value, with: { (snapshot) in
@@ -480,14 +531,18 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                 }
             }
             self.updatingSpaceList = false
-            
+            withAnimation(.spring()){
+                self.updatingSpaceList = false
+            }
             
         })
         
         
     }
     func trackUserListOnce(){
-        updatingUserList = true
+        withAnimation(.spring()){
+            updatingUserList = true
+        }
         var ref: DatabaseReference!
         ref = Database.database().reference()
         ref.child("users").observeSingleEvent(of: .value, with: { (snapshot) in
@@ -505,13 +560,17 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                     
                 }
             }
-            self.updatingUserList = false
+            withAnimation(.spring()){
+                self.updatingUserList = false
+            }
             
         })
     }
     func trackUserListOnce2() -> Promise<Bool>{
         let p = Promise<Bool> { resolver in
-            updatingUserList = true
+            withAnimation(.spring()){
+                updatingUserList = true
+            }
             var ref: DatabaseReference!
             ref = Database.database().reference()
             ref.child("users").observeSingleEvent(of: .value, with: { (snapshot) in
@@ -529,7 +588,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                         
                     }
                 }
-                self.updatingUserList = false
+                withAnimation(.spring()){
+                    self.updatingUserList = false
+                }
                 print("trackUserListOnce2()")
                 resolver.fulfill(true)
             })
@@ -538,7 +599,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
     }
     func trackSpaceListOnce2()-> Promise<Bool>{
         let p = Promise<Bool> { resolver in
-            updatingSpaceList = true
+            withAnimation(.spring()){
+                updatingSpaceList = true
+            }
             var ref: DatabaseReference!
             ref = Database.database().reference()
             ref.child("spaces").observeSingleEvent(of: .value, with: { (snapshot) in
@@ -571,8 +634,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                         self.spaceL.append(s)
                     }
                 }
-                self.updatingSpaceList = false
-                
+                withAnimation(.spring()){
+                    self.updatingSpaceList = false
+                }
                 resolver.fulfill(true)
                 print("trackSpaceListOnce2()")
             })
@@ -591,12 +655,16 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         databasereference.child("users/\(currentUser.uid)/userName").setValue(value)
         fetchUser(uid: currentUser.uid) { (user) in
             self.user = user
-            self.isLoading = false
+            withAnimation(.spring()){
+                self.isLoading = false
+            }
         }
     }
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
         hideKeyboard()
-        self.isLoading = true
+        withAnimation(.spring()){
+            self.isLoading = true
+        }
         if let error = error {
             if (error as NSError).code == GIDSignInErrorCode.hasNoAuthInKeychain.rawValue {
                 
@@ -608,21 +676,29 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                     
                     _ = trackSpaceListOnce2()
                         .done{_ in
-                            self.isLoading = false
+                            withAnimation(.spring()){
+                                self.isLoading = false
+                            }
                             
                         }
                 }else{
-                    self.isLoading = false
+                    withAnimation(.spring()){
+                        self.isLoading = false
+                    }
                     print("No user logged in.")
                 }
             } else {
-                self.isLoading = false
+                withAnimation(.spring()){
+                    self.isLoading = false
+                }
                 print("\(error.localizedDescription)")
             }
             return
         }
         guard let authentication = user.authentication else {
-            self.isLoading = false
+            withAnimation(.spring()){
+                self.isLoading = false
+            }
             return
             
         }
@@ -631,7 +707,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         hideKeyboard()
         Auth.auth().signIn(with: credential){ (result, error) in
             if error != nil {
-                self.isLoading = false
+                withAnimation(.spring()){
+                    self.isLoading = false
+                }
                 print(error!.localizedDescription)
             }else{
                 
@@ -647,7 +725,9 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                     self.signedIn = true
                     _ = self.trackSpaceListOnce2()
                         .done{_ in
-                            self.isLoading = false
+                            withAnimation(.spring()){
+                                self.isLoading = false
+                            }
                             
                         }
                 }

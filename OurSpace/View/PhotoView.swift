@@ -103,7 +103,9 @@ struct PhotoView: View {
         
         var body: some View {
             Button(action: {
-                selectedSpaceFunc = ""
+                withAnimation(.spring()){
+                    selectedSpaceFunc = ""
+                }
                
                 
             }){
