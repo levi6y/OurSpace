@@ -49,7 +49,8 @@ struct SettingsView: View {
             if googleDelegate.user.pic != "" && googleDelegate.user.pic != "0" {
                 
                 ZStack{
-                    
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: Color.white))
                     WebImage(url: URL(string: googleDelegate.user.pic)!)
                         .placeholder{
                             ZStack{
@@ -85,10 +86,12 @@ struct SettingsView: View {
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 200, height: 200,alignment: .center)
                         .clipShape(Circle())
-                        .opacity(0)
 
-                }.foregroundColor(.clear)
-                .padding(.top,25)
+
+                }.padding(.top,25)
+                .onTapGesture {
+                    googleDelegate.picker.toggle()
+                }
                 
             }
             
