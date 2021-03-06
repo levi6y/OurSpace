@@ -103,7 +103,17 @@ struct spaceFunction : View{
     var body: some View{
         
         HStack{
-            Spacer()
+            if (txt == "Photo"){
+                Image(systemName: "photo.fill")
+                    .foregroundColor(Color("c3"))
+            }else if(txt == "Log"){
+                Image(systemName: "note.text")
+                    .foregroundColor(Color("c3"))
+            }else if(txt == "Anniversary"){
+                Image(systemName: "calendar")
+                    .foregroundColor(Color("c3"))
+            }
+            
             VStack(alignment: .leading, spacing: 5){
                 Text(txt)
                     .foregroundColor(Color("c3"))

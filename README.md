@@ -27,3 +27,6 @@
 
 5 March
 1. add animation to UI
+
+6 March
+1. implement create/view/delete for Log function. (Log function finished)

@@ -319,8 +319,6 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                     let l = mylog(id: t1, title: t2, content: t3, spaceuid: t4)
                     self.logs.append(l)
                 }
-                print("log list updated")
-                print(self.logs)
             }
             withAnimation(.spring()){
                 self.isLoading = false
