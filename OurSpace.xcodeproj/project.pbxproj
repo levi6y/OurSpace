@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		5A1348A025B880E30067BD3D /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A13489F25B880E30067BD3D /* User.swift */; };
 		5A41173625F1A3F5001403D6 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 5A41173525F1A3F5001403D6 /* README.md */; };
+		5A41173925F2F8DB001403D6 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A41173825F2F8DB001403D6 /* Log.swift */; };
+		5A41173C25F303AF001403D6 /* LogCreate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A41173B25F303AF001403D6 /* LogCreate.swift */; };
 		5A5086492592F9440081FB5F /* GoogleDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A5086482592F9440081FB5F /* GoogleDelegate.swift */; };
 		5A536F7C2592F1EF00AC16BA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A536F7B2592F1EF00AC16BA /* AppDelegate.swift */; };
 		5A536F7E2592F1EF00AC16BA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A536F7D2592F1EF00AC16BA /* SceneDelegate.swift */; };
@@ -45,6 +47,8 @@
 		5602417606D9B4439EC86C08 /* Pods-OurSpace.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OurSpace.release.xcconfig"; path = "Target Support Files/Pods-OurSpace/Pods-OurSpace.release.xcconfig"; sourceTree = "<group>"; };
 		5A13489F25B880E30067BD3D /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		5A41173525F1A3F5001403D6 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
+		5A41173825F2F8DB001403D6 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
+		5A41173B25F303AF001403D6 /* LogCreate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogCreate.swift; sourceTree = "<group>"; };
 		5A5086482592F9440081FB5F /* GoogleDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleDelegate.swift; sourceTree = "<group>"; };
 		5A536F782592F1EF00AC16BA /* OurSpace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OurSpace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A536F7B2592F1EF00AC16BA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -100,6 +104,7 @@
 				5AAA9F7C25DA4D0900921A6A /* FetchUserList.swift */,
 				5AD6A80225EB04BD002EEB7E /* IdentifiableSpace.swift */,
 				5AC50B7525EDD1AE00F82D75 /* image.swift */,
+				5A41173825F2F8DB001403D6 /* Log.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -166,6 +171,7 @@
 				5AC50B6F25EDB3E600F82D75 /* LogView.swift */,
 				5AC50B7225EDC01C00F82D75 /* ImageView.swift */,
 				5AB6303B25F051E90086B332 /* ImageDetailView.swift */,
+				5A41173B25F303AF001403D6 /* LogCreate.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -323,6 +329,7 @@
 			files = (
 				5A67A3AF25CAF198004116C6 /* ImagePicker.swift in Sources */,
 				5A536F7C2592F1EF00AC16BA /* AppDelegate.swift in Sources */,
+				5A41173925F2F8DB001403D6 /* Log.swift in Sources */,
 				5AAA9F7725DA3F5B00921A6A /* Space.swift in Sources */,
 				5AC50B6D25EDB3DD00F82D75 /* AnniversaryView.swift in Sources */,
 				5AB6303C25F051E90086B332 /* ImageDetailView.swift in Sources */,
@@ -335,6 +342,7 @@
 				5AD6A80925EB1E81002EEB7E /* SpaceView.swift in Sources */,
 				5AAA9F7A25DA400000921A6A /* FetchSpace.swift in Sources */,
 				5AC50B7325EDC01C00F82D75 /* ImageView.swift in Sources */,
+				5A41173C25F303AF001403D6 /* LogCreate.swift in Sources */,
 				5AAA9F8025DFA18200921A6A /* Loader.swift in Sources */,
 				5A67A37E25CAE63E004116C6 /* CreateSpaceView.swift in Sources */,
 				5A67A38725CAE705004116C6 /* SettingsView.swift in Sources */,

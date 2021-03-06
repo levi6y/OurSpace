@@ -63,6 +63,26 @@ func alertView(msg: String,completion: @escaping (String) -> ()){
             completion("delete")
         }))
         UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
+    }else if(msg == "deletelog"){
+        let alert = UIAlertController(title: "Delete Log", message: "", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .destructive))
+        
+        alert.addAction(UIAlertAction(title: msg.contains("Verification") ? "Verify" : "Delete", style: .default, handler: { (_) in
+            
+            
+            completion("delete")
+        }))
+        UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
+    }else if(msg == "Title/Content is required"){
+        let alert = UIAlertController(title: "Title/Content is required", message: "", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: msg.contains("Verification") ? "Verify" : "OK", style: .default, handler: { (_) in
+            
+            
+            completion("1")
+        }))
+        UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
     }
     
     

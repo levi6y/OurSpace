@@ -28,6 +28,18 @@ struct PhotoView: View {
                 
                 Spacer(minLength: 0)
                 Button(action: {
+                    googleDelegate.getPhotosURL()
+                    photoEdit = false
+                    
+                    
+                }) {
+                    
+                    Image(systemName: "arrow.clockwise.circle.fill")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(.white)
+                }.padding(.trailing,10)
+                Button(action: {
                     
                     photoEdit.toggle()
                     
@@ -38,6 +50,8 @@ struct PhotoView: View {
                         .frame(width: 30, height: 30)
                         .foregroundColor(.white)
                 }.padding(.trailing ,10)
+                
+               
             }
             .padding()
             .padding(.top,edges!.top)
@@ -140,13 +154,3 @@ struct PhotoView: View {
 
 
 }
-
-
-struct ContentView_Previews: PreviewProvider {
-   @EnvironmentObject var googleDelegate: GoogleDelegate
-   static var previews: some View {
-      ContentView().environmentObject(GoogleDelegate())
-  }
-}
-
-

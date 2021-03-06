@@ -12,8 +12,7 @@ import SwiftUI
 import PromiseKit
 class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
     @Published var signedIn: Bool = false
-    @Published var emailVerified: Bool = false
-    @Published var user = User(email: "",  userName: "",uid:"", pic:"")
+    @Published var user = User(email: "",  userName: "",uid:"", pic:"")     // current user
  
     // Image Picker For Updating Image...
     @Published var picker = false
@@ -24,22 +23,25 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
     @Published var isLoading = false
     @Published var updatingUserList = false
     @Published var updatingSpaceList = false
-    @Published var spaceL:[Space] = [Space]()
-    @Published var currentUsersSpaceL:[currentSpace] = [currentSpace]()
-    @Published var userL:[User] = [User]()
-    @Published var images:[image] = []
-    @Published var imagesURL:[String] = []
-    @Published var selectedSpace: currentSpace = currentSpace(id: -1,u1: "", u2: "", name: "", uid: "", numOfPhotos: 0, numOfLogs: 0, numOfAnniversaries: 0)
+    @Published var spaceL:[Space] = [Space]()                               // list of all spaces
+    @Published var currentUsersSpaceL:[currentSpace] = [currentSpace]()     //spaces that belong to current user
+    @Published var userL:[User] = [User]()                                  //list of all users
+    @Published var images:[image] = []                                      //for photo function
+    @Published var imagesURL:[String] = []                                  //for photo function
+    @Published var selectedSpace: currentSpace = currentSpace(id: -1,u1: "", u2: "", name: "", uid: "", numOfPhotos: 0, numOfLogs: 0, numOfAnniversaries: 0)                                              //pressed space
 
     // for viewing photo's details
-    @Published var selectedImages: [String] = []
-    @Published var selectedImageID = ""
-    @Published var imageViewerOffset: CGSize = .zero
-    @Published var bgOpacity: Double = 1
-    @Published var showingViewer = false
+    @Published var selectedImages: [String] = []                            //for photo browser
+    @Published var selectedImageID = ""                                     //for photo browser
+    @Published var imageViewerOffset: CGSize = .zero                        //for photo browser
+    @Published var bgOpacity: Double = 1                                    //for photo browser
+    @Published var showingViewer = false                                    //for photo browser
+    @Published var imageScale: CGFloat = 1                                  //for photo browser
+    
     @Published var showTabbar = true
     
-    @Published var imageScale: CGFloat = 1
+    @Published var logs:[mylog] = []
+
     
     func onChange(value: CGSize){
         imageViewerOffset = value
@@ -119,6 +121,47 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         }
         
     }
+    func createLog(title:String, content:String) -> Promise<Bool>{
+        hideKeyboard()
+        
+        let p = Promise<Bool> { resolver in
+            
+            if (title == "" || content == ""){
+                
+                alertView(msg: "Title/Content is required") { (txt) in
+                    
+                    if txt != ""{
+                        withAnimation(.spring()){
+                            self.isLoading = false
+                            resolver.fulfill(false)
+                        }
+                        
+                    }
+                }
+            }else{
+                withAnimation(.spring()){
+                    self.isLoading = true
+                }
+                let ref = Database.database().reference().child("logs")
+                guard let uid:String = ref.child("spaces").childByAutoId().key else { return }
+                let l:NSDictionary = [ "id" : uid, "title": title, "content": content, "spaceuid": self.selectedSpace.uid]
+                ref.child(self.selectedSpace.uid).child(uid).setValue(l)
+                self.selectedSpace.numOfLogs += 1
+                var databasereference: DatabaseReference!
+                databasereference = Database.database().reference()
+                databasereference.child("spaces/\(self.selectedSpace.uid)/numOfLogs").setValue(self.selectedSpace.numOfLogs)
+                withAnimation(.spring()){
+                    self.isLoading = false
+                }
+                resolver.fulfill(true)
+            }
+            
+        }
+        return p
+        
+        
+    }
+    
     func uploadPhoto(){
         
         withAnimation(.spring()){
@@ -253,6 +296,36 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         }
         
     }
+    
+    func getLogs(){
+        hideKeyboard()
+        withAnimation(.spring()){
+            self.isLoading = true
+        }
+        let ref = Database.database().reference().child("logs/" + selectedSpace.uid)
+        ref.observeSingleEvent(of: .value, with: { (snapshot) in
+            let value = snapshot.value as? NSDictionary
+            self.logs.removeAll()
+            if (value != nil){
+                
+                for log in value! {
+                    let temp = log.value as? NSDictionary
+                    let t1 = temp?["id"] as? String ?? ""
+                    let t2 = temp?["title"] as? String ?? ""
+                    let t3 = temp?["content"] as? String ?? ""
+                    let t4 = temp?["spaceuid"] as? String ?? ""
+                    let l = mylog(id: t1, title: t2, content: t3, spaceuid: t4)
+                    self.logs.append(l)
+                }
+                print("log list updated")
+                print(self.logs)
+            }
+            withAnimation(.spring()){
+                self.isLoading = false
+            }
+            
+        })
+    }
     func getPhotosURL(){
         hideKeyboard()
         withAnimation(.spring()){
@@ -382,7 +455,41 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         
         
     }
+    func deleteLog(uid: String){
+        
+        
+        
+        alertView(msg: "deletelog") { (txt) in
+            
+            if txt == "delete"{
+                withAnimation(.spring()){
+                    self.isLoading = true
+                }
+                let ref = Database.database().reference().child("logs/" + self.selectedSpace.uid)
+                _ = self.removevalue2(ref: ref.child(uid))
+                    .done{ _ in
+                        self.getLogs()
+                        self.selectedSpace.numOfLogs -= 1
+                        Database.database().reference().child("spaces/" + self.selectedSpace.uid).child("numOfLogs").setValue(self.selectedSpace.numOfLogs)
+                        
+                    }
+            }
+        }
+        
+    }
     
+    
+    func removevalue2(ref: DatabaseReference) -> Promise<Bool>{
+        
+        let p = Promise<Bool> { resolver in
+            withAnimation(.spring()){
+                isLoading = true
+            }
+            ref.removeValue()
+            resolver.fulfill(true)
+        }
+        return p
+    }
     func deletePhoto(ref: StorageReference){
         
         alertView(msg: "deletePhoto") { (txt) in
@@ -530,7 +637,6 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                     self.spaceL.append(s)
                 }
             }
-            self.updatingSpaceList = false
             withAnimation(.spring()){
                 self.updatingSpaceList = false
             }

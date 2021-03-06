@@ -29,6 +29,9 @@ struct Home: View {
     @State var edit = false
     @State var selectedSpaceFunc = ""
     @State var photoEdit = false
+    @State var logEdit = false
+    @State var newLog = false
+
     var edges = UIApplication.shared.windows.first?.safeAreaInsets
     
     
@@ -62,9 +65,14 @@ struct Home: View {
                             
                         }
                         else if (selectedSpaceFunc == "Log"){
+                            if newLog{
+                                LogCreate(newLog: $newLog)
+                                    .opacity(selectedTab == "Dashboard" ? 1 : 0)
+                            }else{
+                                LogView(selectedSpaceFunc: $selectedSpaceFunc, logEdit: $logEdit, newLog: $newLog)
+                                    .opacity(selectedTab == "Dashboard" ? 1 : 0)
+                            }
                             
-                            LogView(selectedSpaceFunc: $selectedSpaceFunc)
-                                .opacity(selectedTab == "Dashboard" ? 1 : 0)
                             
                         }
                         else if (selectedSpaceFunc == "Anniversary"){

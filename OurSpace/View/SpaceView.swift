@@ -48,6 +48,7 @@ struct SpaceView: View {
                         withAnimation(.spring()){
                             selectedSpaceFunc = "Log"
                         }
+                        googleDelegate.getLogs()
                     }
                     
                     spaceFunction(txt: "Anniversary").onTapGesture {
