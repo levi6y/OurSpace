@@ -37,7 +37,7 @@ struct LogCreate: View {
             VStack{
                 VStack{
                     TextField("Title", text: $logTitle)
-                        .foregroundColor(Color("c2"))
+                        .foregroundColor(Color("c3"))
                         .lineLimit(1)
                 }.padding(.vertical)
                 .padding(.horizontal,20)
@@ -49,7 +49,7 @@ struct LogCreate: View {
                 VStack{
                     
                     TextEditor(text: $logContent)
-                        .foregroundColor(Color("c2"))
+                        .foregroundColor(Color("c3"))
                 }.padding(.vertical)
                 .padding(.horizontal,20)
                 .background(Color.white)

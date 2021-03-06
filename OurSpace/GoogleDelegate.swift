@@ -40,6 +40,8 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
     
     @Published var showTabbar = true
     
+    @Published var selectedLog = mylog(id: "", title: "", content: "", spaceuid: "")
+    
     @Published var logs:[mylog] = []
 
     

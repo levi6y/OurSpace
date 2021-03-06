@@ -65,7 +65,12 @@ struct LogView: View {
                         ForEach(self.googleDelegate.logs){ l in
                             
                             
-                            logcellview(logEdit: logEdit, data: l)
+                            logcellview(logEdit: logEdit, data: l).onTapGesture {
+                                withAnimation(.spring()){
+                                    googleDelegate.selectedLog = l
+                                }
+                                
+                            }
                             
                         }
                     }

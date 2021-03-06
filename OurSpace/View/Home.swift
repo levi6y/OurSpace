@@ -68,6 +68,9 @@ struct Home: View {
                             if newLog{
                                 LogCreate(newLog: $newLog)
                                     .opacity(selectedTab == "Dashboard" ? 1 : 0)
+                            }else if googleDelegate.selectedLog.id != ""{
+                                LogDetailView()
+                                    .opacity(selectedTab == "Dashboard" ? 1 : 0)
                             }else{
                                 LogView(selectedSpaceFunc: $selectedSpaceFunc, logEdit: $logEdit, newLog: $newLog)
                                     .opacity(selectedTab == "Dashboard" ? 1 : 0)
