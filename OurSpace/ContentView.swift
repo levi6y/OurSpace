@@ -139,14 +139,19 @@ struct Login : View {
     
     func login(){
         hideKeyboard()
-        googleDelegate.isLoading = true
+        withAnimation(.spring()){
+            googleDelegate.isLoading = true
+        }
+        
         
         Auth.auth().signIn(withEmail: loginemail, password: loginpassword) { (result, error) in
             if error != nil {
                 logedin = false
                 UserDefaults.standard.set(logedin,forKey: "logedin")
                 alertMessage = error?.localizedDescription ?? ""
-                googleDelegate.isLoading = false
+                withAnimation(.spring()){
+                    googleDelegate.isLoading = false
+                }
                 showingAlert = true
             }else{
                 let currentUser = Auth.auth().currentUser!
@@ -154,7 +159,9 @@ struct Login : View {
                     logedin = false
                     UserDefaults.standard.set(logedin,forKey: "logedin")
                     alertMessage = "An email has been sent to your email address, please check and verify your email address!"
-                    googleDelegate.isLoading = false
+                    withAnimation(.spring()){
+                        googleDelegate.isLoading = false
+                    }
                     showingAlert = true
                 
                 }else{
@@ -164,7 +171,9 @@ struct Login : View {
                     }
                     logedin = true
                     UserDefaults.standard.set(logedin,forKey: "logedin")
-                    googleDelegate.isLoading = false
+                    withAnimation(.spring()){
+                        googleDelegate.isLoading = false
+                    }
                     print("Signed in with email")
                     
                     
@@ -218,25 +227,31 @@ struct Forget : View {
 
     func forget(){
         hideKeyboard()
-        googleDelegate.isLoading = true
+        
         if forgetemail == ""{
             alertMessage = "Please enter email address!"
-            googleDelegate.isLoading = false
+            
             showingAlert = true
             return
         }
-        
+        withAnimation(.spring()){
+            googleDelegate.isLoading = true
+        }
         
         Auth.auth().sendPasswordReset(withEmail: forgetemail) { error in
             if error != nil{
                 alertMessage = error?.localizedDescription ?? ""
                 forgetemail = ""
-                googleDelegate.isLoading = false
+                withAnimation(.spring()){
+                    googleDelegate.isLoading = false
+                }
                 showingAlert = true
             }else{
                 alertMessage = "Email Sent!"
                 forgetemail = ""
-                googleDelegate.isLoading = false
+                withAnimation(.spring()){
+                    googleDelegate.isLoading = false
+                }
                 showingAlert = true
             }
         }
@@ -299,18 +314,30 @@ struct SignUp : View {
         let emailTest:NSPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
         if signupemail.isEmpty || signuppassword.isEmpty || signuprepassword.isEmpty {
             alertMessage = "Please fill in all the forms."
+            withAnimation(.spring()){
+                googleDelegate.isLoading = false
+            }
             showingAlert = true
             valid = false
         }else if !(emailTest.evaluate(with: signupemail)){
             alertMessage = "Invalid Email address."
+            withAnimation(.spring()){
+                googleDelegate.isLoading = false
+            }
             showingAlert = true
             valid = false
         }else if signuppassword.count <= 5 {
             alertMessage = "Password too short."
+            withAnimation(.spring()){
+                googleDelegate.isLoading = false
+            }
             showingAlert = true
             valid = false
         }else if !(signuppassword == signuprepassword){
             alertMessage = "Those passwords didn't match."
+            withAnimation(.spring()){
+                googleDelegate.isLoading = false
+            }
             showingAlert = true
             valid = false
         }
@@ -335,29 +362,37 @@ struct SignUp : View {
             signuppasswordVisible = false
             signuprepasswordVisible = false
             forgetemail = ""
+            withAnimation(.spring()){
+                googleDelegate.isLoading = false
+            }
         } catch let signOutError as NSError {
             alertMessage = signOutError.localizedDescription
             logedin = false
             UserDefaults.standard.set(logedin,forKey: "logedin")
-            googleDelegate.isLoading = false
+            withAnimation(.spring()){
+                googleDelegate.isLoading = false
+            }
             showingAlert = true
         }
         
-        googleDelegate.isLoading = false
+        
 
     }
     func signup(){
         hideKeyboard()
-        googleDelegate.isLoading = true
+        withAnimation(.spring()){
+            googleDelegate.isLoading = true
+        }
         if !validateForm(){
-            googleDelegate.isLoading = false
             return
         }
         
         Auth.auth().createUser(withEmail: signupemail, password: signuppassword){ (result, error) in
             if error != nil {
                 alertMessage = error?.localizedDescription ?? ""
-                googleDelegate.isLoading = false
+                withAnimation(.spring()){
+                    googleDelegate.isLoading = false
+                }
                 showingAlert = true
             }else{
                 let currentUser = Auth.auth().currentUser!

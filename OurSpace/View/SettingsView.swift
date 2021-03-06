@@ -51,10 +51,16 @@ struct SettingsView: View {
                 ZStack{
                     
                     WebImage(url: URL(string: googleDelegate.user.pic)!)
-                        .placeholder{Image("userphoto")
-                            .resizable()
-                            .scaledToFit()
-                            .aspectRatio(contentMode: .fill)
+                        .placeholder{
+                            ZStack{
+                                
+                                Image("userphoto")
+                                .resizable()
+                                .scaledToFit()
+                                .aspectRatio(contentMode: .fill)
+                                .opacity(0)
+
+                            }.foregroundColor(.clear)
                         } // Placeholder Image
                         .resizable()
                         .scaledToFit()
@@ -63,11 +69,7 @@ struct SettingsView: View {
                         .clipShape(Circle())
                         
             
-                    if googleDelegate.isLoading{
-                        
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: Color.white))
-                    }
+                    
                 }
                 .padding(.top,25)
                 .onTapGesture {
@@ -81,19 +83,13 @@ struct SettingsView: View {
                         .resizable()
                         .scaledToFit()
                         .aspectRatio(contentMode: .fill)
-                        .frame(width: 150, height: 150,alignment: .center)
+                        .frame(width: 200, height: 200,alignment: .center)
                         .clipShape(Circle())
-                    
-                    if googleDelegate.isLoading{
-                        
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: Color("c2")))
-                    }
-                }
+                        .opacity(0)
+
+                }.foregroundColor(.clear)
                 .padding(.top,25)
-                .onTapGesture {
-                    googleDelegate.picker.toggle()
-                }
+                
             }
             
             HStack(spacing: 15){

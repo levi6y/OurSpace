@@ -45,7 +45,9 @@ struct LogCreate: View {
                 .cornerRadius(10)
 
                 .shadow(radius: 5)
-                Text("Content").foregroundColor(.white)
+                Text("Content")
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
                 VStack{
                     
                     TextEditor(text: $logContent)
