@@ -46,29 +46,29 @@ struct Home: View {
                                                 Alert(title: Text(m), message: Text(""), dismissButton: .default(Text("OK")))
                                             }
                     
-                    if (googleDelegate.selectedSpace.uid == ""){
+                    if (googleDelegate.selectedSpace.uid == ""){ //  not in a space
                         
                         DashboardView(edit: $edit).opacity(selectedTab == "Dashboard" ? 1 : 0)
                         
-                    }else{
+                    }else{                                      // in a space
                         
-                        if (selectedSpaceFunc == ""){
+                        if (selectedSpaceFunc == ""){           // func not selected
                             
                             SpaceView(selectedSpaceFunc: $selectedSpaceFunc)
                                 .opacity(selectedTab == "Dashboard" ? 1 : 0)
                             
                         }
-                        else if (selectedSpaceFunc == "Photo"){
+                        else if (selectedSpaceFunc == "Photo"){ //in photo function
                             
                             PhotoView(selectedSpaceFunc: $selectedSpaceFunc,photoEdit: $photoEdit)
                                 .opacity(selectedTab == "Dashboard" ? 1 : 0)
                             
                         }
-                        else if (selectedSpaceFunc == "Log"){
+                        else if (selectedSpaceFunc == "Log"){   //in log functio
                             if newLog{
                                 LogCreate(newLog: $newLog)
                                     .opacity(selectedTab == "Dashboard" ? 1 : 0)
-                            }else if googleDelegate.selectedLog.id != ""{
+                            }else if googleDelegate.selectedLog.id != ""{   // viewing log
                                 LogDetailView()
                                     .opacity(selectedTab == "Dashboard" ? 1 : 0)
                             }else{
@@ -78,7 +78,7 @@ struct Home: View {
                             
                             
                         }
-                        else if (selectedSpaceFunc == "Anniversary"){
+                        else if (selectedSpaceFunc == "Anniversary"){   //in anniversary function
                             
                             AnniversaryView(selectedSpaceFunc: $selectedSpaceFunc)
                                 .opacity(selectedTab == "Dashboard" ? 1 : 0)
