@@ -19,7 +19,7 @@ struct DashboardView: View {
             HStack{
                 
                 Text("Dashboard")
-                    .font(.largeTitle)
+                    .font(.title)
                     .fontWeight(.heavy)
                     .foregroundColor(.white)
                 

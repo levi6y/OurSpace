@@ -33,7 +33,7 @@ struct SettingsView: View {
             HStack{
                 
                 Text("Settings")
-                    .font(.largeTitle)
+                    .font(.title)
                     .fontWeight(.heavy)
                     .foregroundColor(.white)
                 

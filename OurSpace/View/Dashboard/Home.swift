@@ -31,6 +31,8 @@ struct Home: View {
     @State var photoEdit = false
     @State var logEdit = false
     @State var newLog = false
+    @State var anniversaryEdit = false
+    @State var newAnniversary = false
 
     var edges = UIApplication.shared.windows.first?.safeAreaInsets
     
@@ -79,9 +81,14 @@ struct Home: View {
                             
                         }
                         else if (selectedSpaceFunc == "Anniversary"){   //in anniversary function
+                            if newAnniversary{
+                                AnniversaryCreate(newAnniversary: $newAnniversary)
+                                    .opacity(selectedTab == "Dashboard" ? 1 : 0)
+                            }else{
+                                AnniversaryView(selectedSpaceFunc: $selectedSpaceFunc,anniversaryEdit: $anniversaryEdit, newAnniversary: $newAnniversary)
+                                    .opacity(selectedTab == "Dashboard" ? 1 : 0)
+                            }
                             
-                            AnniversaryView(selectedSpaceFunc: $selectedSpaceFunc)
-                                .opacity(selectedTab == "Dashboard" ? 1 : 0)
                             
                         }
                         

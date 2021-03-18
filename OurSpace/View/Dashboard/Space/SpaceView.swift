@@ -17,7 +17,7 @@ struct SpaceView: View {
             HStack{
                 
                 Text(googleDelegate.selectedSpace.name)
-                    .font(.largeTitle)
+                    .font(.title)
                     .fontWeight(.heavy)
                     .foregroundColor(.white)
                 
@@ -29,7 +29,7 @@ struct SpaceView: View {
             // Top Shadow Effect...
             .background(Color("c2"))
             .shadow(color: Color.white.opacity(0.06), radius: 5, x: 0, y: 5)
-            
+
             
             ScrollView(.vertical, showsIndicators: false) {
                 
@@ -55,6 +55,7 @@ struct SpaceView: View {
                         withAnimation(.spring()){
                             selectedSpaceFunc = "Anniversary"
                         }
+                        googleDelegate.getAnniversaries()
                     }
                     
                 }.padding()

@@ -22,7 +22,7 @@ struct PhotoView: View {
             HStack{
                 
                 Text(googleDelegate.selectedSpace.name + " (Photos)")
-                    .font(.largeTitle)
+                    .font(.title)
                     .fontWeight(.heavy)
                     .foregroundColor(.white)
                 

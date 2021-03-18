@@ -20,7 +20,7 @@ struct LogView: View {
             HStack{
                 
                 Text(googleDelegate.selectedSpace.name + " (Logs)")
-                    .font(.largeTitle)
+                    .font(.title)
                     .fontWeight(.heavy)
                     .foregroundColor(.white)
                 
@@ -153,7 +153,7 @@ struct LogView: View {
                             self.googleDelegate.deleteLog(uid: self.data.id)
                         }
                     }){
-                        Image(systemName: "minus.circle").font(.title)
+                        Image(systemName: "minus.circle")
                     }.foregroundColor(.red)
                 }
                 

@@ -30,3 +30,6 @@
 
 6 March
 1. implement create/view/delete for Log function. (Log function finished)
+
+18 March
+1. implement create/view/delete for Anniversary function. (All required functions finished)

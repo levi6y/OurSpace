@@ -10,6 +10,18 @@ import Firebase
 import GoogleSignIn
 import SwiftUI
 import PromiseKit
+
+
+extension Date {
+    init(_ dateString:String) {
+        let dateStringFormatter = DateFormatter()
+        dateStringFormatter.dateFormat = "yyyy-MM-dd"
+        dateStringFormatter.locale = NSLocale(localeIdentifier: "en_US") as Locale
+        //dateStringFormatter.timeZone = TimeZone(abbreviation: "GMT-4") //Ottawa time zone
+        let date = dateStringFormatter.date(from: dateString)!
+        self.init(timeInterval:0, since:date)
+    }
+}
 class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
     @Published var signedIn: Bool = false
     @Published var user = User(email: "",  userName: "",uid:"", pic:"")     // current user
@@ -43,6 +55,7 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
     @Published var selectedLog = mylog(id: "", title: "", content: "", spaceuid: "")
     
     @Published var logs:[mylog] = []
+    @Published var anniversaries:[mydate] = []
 
     
     func onChange(value: CGSize){
@@ -163,6 +176,53 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         
         
     }
+    func createAnniversary(anniversaryDescription: String, anniversaryDate:Date) -> Promise<Bool>{
+        hideKeyboard()
+        
+        let p = Promise<Bool> { resolver in
+            
+            if (anniversaryDescription == ""){
+                
+                alertView(msg: "Description is required") { (txt) in
+                    
+                    if txt != ""{
+                        withAnimation(.spring()){
+                            self.isLoading = false
+                            resolver.fulfill(false)
+                        }
+                        
+                    }
+                }
+            }else{
+                withAnimation(.spring()){
+                    self.isLoading = true
+                }
+                let ref = Database.database().reference().child("anniversaries")
+                guard let uid:String = ref.child("spaces").childByAutoId().key else { return }
+                let t = String(anniversaryDate.description.prefix(10))
+                let y = Int(t.split(separator: "-")[0])!
+                let m = Int(t.split(separator: "-")[1])!
+                let d = Int(t.split(separator: "-")[2])!
+                //print("test: \(y)-\(m)-\(d)    \(anniversaryDate.description)")
+                let l:NSDictionary = [ "id" : uid, "description": anniversaryDescription, "year": y, "month": m, "day": d, "spaceuid": self.selectedSpace.uid]
+                ref.child(self.selectedSpace.uid).child(uid).setValue(l)
+                self.selectedSpace.numOfAnniversaries += 1
+                var databasereference: DatabaseReference!
+                databasereference = Database.database().reference()
+                databasereference.child("spaces/\(self.selectedSpace.uid)/numOfAnniversaries").setValue(self.selectedSpace.numOfAnniversaries)
+                resolver.fulfill(true)
+                withAnimation(.spring()){
+                    self.isLoading = false
+                }
+                
+            }
+            
+        }
+        return p
+        
+        
+    }
+    
     
     func uploadPhoto(){
         
@@ -326,6 +386,42 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
             
         })
     }
+    func getAnniversaries(){
+        hideKeyboard()
+        withAnimation(.spring()){
+            self.isLoading = true
+        }
+        let ref = Database.database().reference().child("anniversaries/" + selectedSpace.uid)
+        ref.observeSingleEvent(of: .value, with: { (snapshot) in
+            let value = snapshot.value as? NSDictionary
+            self.anniversaries.removeAll()
+            if (value != nil){
+                
+                for anniversary in value! {
+                    let temp = anniversary.value as? NSDictionary
+                    let t1 = temp?["id"] as? String ?? ""
+                    let t2 = temp?["description"] as? String ?? ""
+                    let t3 = temp?["year"] as? Int ?? 0
+                    let t4 = temp?["month"] as? Int ?? 0
+                    let t5 = temp?["day"] as? Int ?? 0
+                    let t6 = temp?["spaceuid"] as? String ?? ""
+                    let t7 = (t3 * 365) + (t4 * 30) + t5
+                    let t8 = String("\(String(t3))-\(t4)-\(t5)")
+                    let a = mydate(id: t1, description: t2, year: t3, month: t4, day: t5, spaceuid: t6, value: t7,text: t8)
+                    
+                    
+                    self.anniversaries.append(a)
+                }
+                self.anniversaries.sort{(d1,d2) -> Bool in
+                    return d1.value > d2.value
+                }
+            }
+            withAnimation(.spring()){
+                self.isLoading = false
+            }
+            
+        })
+    }
     func getPhotosURL(){
         hideKeyboard()
         withAnimation(.spring()){
@@ -477,6 +573,29 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
         }
         
     }
+    func deleteAnniversary(uid: String){
+        
+        
+        
+        alertView(msg: "deleteAnniversary") { (txt) in
+            
+            if txt == "delete"{
+                withAnimation(.spring()){
+                    self.isLoading = true
+                }
+                let ref = Database.database().reference().child("anniversaries/" + self.selectedSpace.uid)
+                _ = self.removevalue2(ref: ref.child(uid))
+                    .done{ _ in
+                        
+                        self.selectedSpace.numOfAnniversaries -= 1
+                        Database.database().reference().child("spaces/" + self.selectedSpace.uid).child("numOfAnniversaries").setValue(self.selectedSpace.numOfAnniversaries)
+                        self.getAnniversaries()
+                        
+                    }
+            }
+        }
+        
+    }
     
     
     func removevalue2(ref: DatabaseReference) -> Promise<Bool>{
@@ -550,7 +669,7 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                                                 }
                                                 self.images.removeAll()
                                                 self.imagesURL.removeAll()
-                                                print("images count = \(self.images.count)")
+                                                //print("images count = \(self.images.count)")
                                                 return
                                             }
                                             var i = 0
@@ -565,6 +684,7 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                                                         }
                                                         return
                                                     } else {
+                                                        
                                                         let temp = image(id: i, URL: url!.absoluteString, ref: item)
                                                         i += 1
                                                         self.images.append(temp)
@@ -573,7 +693,7 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                                                             withAnimation(.spring()){
                                                                 self.isLoading = false
                                                             }
-                                                            print("images count = \(self.images.count)")
+                                                            //print("images count = \(self.images.count)")
                                                             return
                                                         }
                                                     }

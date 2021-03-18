@@ -132,7 +132,7 @@ struct CreateSpaceView: View {
             HStack{
                 
                 Text("Create A Space")
-                    .font(.largeTitle)
+                    .font(.title)
                     .fontWeight(.heavy)
                     .foregroundColor(.white)
                 

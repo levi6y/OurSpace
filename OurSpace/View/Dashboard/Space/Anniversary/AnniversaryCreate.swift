@@ -1,19 +1,19 @@
 //
-//  LogCreate.swift
+//  AnniversaryCreate.swift
 //  OurSpace
 //
-//  Created by levi6y on 2021/3/6.
+//  Created by levi6y on 2021/3/18.
 //
 
 
 import SwiftUI
 
-struct LogCreate: View {
+struct AnniversaryCreate: View {
     @EnvironmentObject var googleDelegate: GoogleDelegate
     var edges = UIApplication.shared.windows.first?.safeAreaInsets
-    @Binding var newLog: Bool
-    @State var logTitle: String = ""
-    @State var logContent: String = ""
+    @Binding var newAnniversary: Bool
+    @State var anniversaryDescription: String = ""
+    @State var anniversaryDate: Date = Date()
     
     var body: some View {
         
@@ -21,8 +21,8 @@ struct LogCreate: View {
             
             HStack{
                 
-                Text(googleDelegate.selectedSpace.name + " (New Log)")
-                    .font(.largeTitle)
+                Text(googleDelegate.selectedSpace.name + " (New Anniversary)")
+                    .font(.title)
                     .fontWeight(.heavy)
                     .foregroundColor(.white)
                 
@@ -35,29 +35,18 @@ struct LogCreate: View {
             .shadow(color: Color.white.opacity(0.06), radius: 5, x: 0, y: 5)
             
             VStack{
-                VStack{
-                    TextField("Title", text: $logTitle)
+                HStack{
+                    TextField("Description", text: $anniversaryDescription)
                         .foregroundColor(Color("c3"))
                         .lineLimit(1)
+                    DatePicker("", selection: $anniversaryDate, in: ...Date(), displayedComponents: .date)
+                        .environment(\.timeZone, TimeZone(abbreviation: "GMT-4")!)
                 }.padding(.vertical)
                 .padding(.horizontal,20)
                 .background(Color.white)
                 .cornerRadius(10)
-
                 .shadow(radius: 5)
-                Text("Content")
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                VStack{
-                    
-                    TextEditor(text: $logContent)
-                        .foregroundColor(Color("c3"))
-                }.padding(.vertical)
-                .padding(.horizontal,20)
-                .background(Color.white)
-                .cornerRadius(10)
-                .padding(.bottom,40)
-                .shadow(radius: 5)
+                
                 
                 
                 
@@ -68,21 +57,22 @@ struct LogCreate: View {
             Spacer()
             
             HStack{
-                backButton(newLog: $newLog)
-                createButton(newLog: $newLog,t:$logTitle,c: $logContent)
+                backButton(newAnniversay: $newAnniversary)
+                createButton(newAnniversary: $newAnniversary,anniversaryDescription: $anniversaryDescription,anniversaryDate: $anniversaryDate)
             }.padding(.bottom,100)
+            
         }.onTapGesture {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
     }
     struct backButton: View {
         @EnvironmentObject var googleDelegate: GoogleDelegate
-        @Binding var newLog: Bool
+        @Binding var newAnniversay: Bool
         
         var body: some View {
             Button(action: {
                 withAnimation(){
-                    newLog = false
+                    newAnniversay = false
                 }
                
                 
@@ -99,19 +89,20 @@ struct LogCreate: View {
     }
     struct createButton: View {
         @EnvironmentObject var googleDelegate: GoogleDelegate
-        @Binding var newLog:Bool
-        @Binding var t: String
-        @Binding var c: String
+        @Binding var newAnniversary:Bool
+        @Binding var anniversaryDescription: String
+        @Binding var anniversaryDate: Date
         var body: some View {
             Button(action: {
-                var _ = googleDelegate.createLog(title: t, content: c)
+                
+                var _ = googleDelegate.createAnniversary(anniversaryDescription: anniversaryDescription, anniversaryDate: anniversaryDate)
                     .done{ r in
                         if r {
-                            googleDelegate.getLogs()
-                            t = ""
-                            c = ""
+                            googleDelegate.getAnniversaries()
+                            anniversaryDescription = ""
+                            anniversaryDate = Date()
                             withAnimation(){
-                                newLog = false
+                                newAnniversary = false
                             }
                         }
                     }

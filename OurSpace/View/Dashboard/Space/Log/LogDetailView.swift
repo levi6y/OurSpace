@@ -20,7 +20,7 @@ struct LogDetailView: View {
             HStack{
                 
                 Text("Log: " + googleDelegate.selectedLog.title)
-                    .font(.largeTitle)
+                    .font(.title)
                     .fontWeight(.heavy)
                     .foregroundColor(.white)
                 
