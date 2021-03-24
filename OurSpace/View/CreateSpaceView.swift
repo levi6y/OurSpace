@@ -36,11 +36,17 @@ struct CreateSpaceView: View {
         ref.child(uid).child("numOfLogs").setValue(0)
         ref.child(uid).child("numOfAnniversaries").setValue(0)
  */
-        m = "Space Created!"
-        withAnimation(.spring()){
-            googleDelegate.isLoading = false
-        }
-        show = true
+        let _ = googleDelegate.trackSpaceListOnce2()
+            .done{_ in
+                
+                withAnimation(.spring()){
+                    googleDelegate.isLoading = false
+                }
+                spaceName = ""
+                createEmail = ""
+                m = "Space Created!"
+                show = true
+            }
         return
     }
 
@@ -75,7 +81,8 @@ struct CreateSpaceView: View {
         
         let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
         let emailTest:NSPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
-        let currentUserEmail = Auth.auth().currentUser?.email
+        let currentUserEmail2 = Auth.auth().currentUser!.email
+        let currentUserEmail = String(currentUserEmail2!).lowercased()
         let e = createEmail.lowercased()
 
         if e.isEmpty || spaceName.isEmpty{

@@ -534,15 +534,80 @@ class GoogleDelegate: NSObject, GIDSignInDelegate, ObservableObject {
                 self.isLoading = true
             }
             if txt == "delete"{
-                let ref = Database.database().reference().child("spaces")
-                ref.child(uid).removeValue()
                 
-                self.trackSpaceListOnce()
                 
+                let ref2 = Storage.storage().reference().child("spaces/" + uid + "/photo")
+                
+                ref2.listAll { (result, error) in
+                    if let error = error {
+                        print(error.localizedDescription)
+                        withAnimation(.spring()){
+                            self.isLoading = false
+                        }
+                        return
+                    }
+                    
+                    if result.items.count == 0{
+                        let ref = Database.database().reference()
+                        ref.child("logs").child(uid).removeValue()
+                        ref.child("anniversaries").child(uid).removeValue()
+                        ref.child("spaces").child(uid).removeValue()
+                        let _ = self.trackSpaceListOnce2()
+                            .done{_ in
+                                
+                                withAnimation(.spring()){
+                                    self.isLoading = false
+                                }
+                                
+                            }
+                        
+                    }else{
+                        var i = 0
+                        let flag = result.items.count
+                        for item in result.items{
+                            item.delete { error in
+                                if let error = error {
+                                    print(error.localizedDescription)
+                                    withAnimation(.spring()){
+                                        self.isLoading = false
+                                    }
+                                    return
+                                } else {
+                                    i += 1
+                                    
+                                    if i == flag{
+                                        let ref = Database.database().reference()
+                                        ref.child("logs").child(uid).removeValue()
+                                        ref.child("anniversaries").child(uid).removeValue()
+                                        ref.child("spaces").child(uid).removeValue()
+                                        let _ = self.trackSpaceListOnce2()
+                                            .done{_ in
+                                                
+                                                withAnimation(.spring()){
+                                                    self.isLoading = false
+                                                }
+                                                
+                                            }
+                                    }
+                                    
+                                }
+                            }
+                            
+                        }
+                    }
+                    
+                    
+                }
+                
+                
+               
+                
+            }else{
+                withAnimation(.spring()){
+                    self.isLoading = false
+                }
             }
-            withAnimation(.spring()){
-                self.isLoading = false
-            }
+            
         }
         
         

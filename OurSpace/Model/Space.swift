@@ -16,3 +16,14 @@ struct Space {
     var numOfAnniversaries: Int
     
 }
+struct currentSpace: Identifiable{
+    var id: Int
+    var u1: String
+    var u2: String
+    var name: String
+    var uid: String
+    var numOfPhotos: Int
+    var numOfLogs: Int
+    var numOfAnniversaries: Int
+    
+}

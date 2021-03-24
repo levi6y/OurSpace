@@ -126,7 +126,7 @@
 		5A0934EA2603B05500239C23 /* Dashboard */ = {
 			isa = PBXGroup;
 			children = (
-				5A67A37925CAE5FB004116C6 /* Home.swift */,
+				5A67A3A225CAE88A004116C6 /* DashboardView.swift */,
 				5A0934EC2603B09200239C23 /* Space */,
 			);
 			path = Dashboard;
@@ -217,12 +217,12 @@
 		5A67A37825CAE5E1004116C6 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				5A67A3A225CAE88A004116C6 /* DashboardView.swift */,
 				5A67A38625CAE705004116C6 /* SettingsView.swift */,
 				5A67A37D25CAE63E004116C6 /* CreateSpaceView.swift */,
 				5A67A38325CAE6BF004116C6 /* CustomTabbar.swift */,
 				5A67A3B225CB1A1F004116C6 /* AlertView.swift */,
 				5AAA9F7F25DFA18200921A6A /* Loader.swift */,
+				5A67A37925CAE5FB004116C6 /* Home.swift */,
 				5A0934EA2603B05500239C23 /* Dashboard */,
 			);
 			path = View;

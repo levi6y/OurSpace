@@ -130,8 +130,8 @@ struct SettingsView: View {
             
         }
         .sheet(isPresented: $googleDelegate.picker) {
-         
-            ImagePicker(picker: $googleDelegate.picker, img_Data: $googleDelegate.img_data)
+            
+            ImagePicker2(picker: $googleDelegate.picker, img_Data: $googleDelegate.img_data)
         }
         .onChange(of: googleDelegate.img_data) { (newData) in
             // whenever image is selected update image in Firebase...
