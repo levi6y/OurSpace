@@ -35,26 +35,6 @@ func fetchUser(uid: String,completion: @escaping (User) -> ()){
                 print("pic: 0")
                 completion(User(email: email, userName: username, uid: uid, pic: "0"))
             }
-            /*
-            let ref = Storage.storage().reference().child("users/userphoto.png")
-            // Fetch the download URL
-            
-            ref.downloadURL { url, error in
-              if let error = error {
-                print(error.localizedDescription)
-              } else {
-                pic = url!.absoluteString
-                print("pic: " + pic)
-                DispatchQueue.main.async {
-                    print("email: " + email)
-                    print("userName: " + username)
-                    print("uid: " + uid)
-                    print("pic: " + pic)
-                    completion(User(email: email, userName: username, uid: uid, pic: pic))
-                }
-              }
-            }
- */
         }else{
             let ref = Storage.storage().reference().child("users/" + uid + "/userphoto")
             // Fetch the download URL
